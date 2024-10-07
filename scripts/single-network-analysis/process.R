@@ -1,5 +1,5 @@
 # **********************************
-# Purpose: Combined Network Analysis
+# Purpose: Single Network Analysis
 # Date: Mai 2024
 # Author: Gilary Evans, Vera Nunez
 # **********************************
@@ -45,6 +45,7 @@ source("scripts/single-network-analysis/fit_network.R")
 source("scripts/single-network-analysis/assoc_mat.R")
 source("scripts/single-network-analysis/net_properties.R")
 
+################ Individual Analysis #######################
 
 # Order
 agg_level="Order"
@@ -61,16 +62,34 @@ for (i in 1:length(datasets_names)) {
 }
 
 
+# Family
+agg_level="Family"
+filtTax = "numbSamp"
+filtTaxPar = list(numbSamp=5)
+filtSamp = "totalReads"
+filtSampPar = list(totalReads=500)
 
 for (i in 1:length(datasets_names)) {
-  # Read the phyloseq object
-  physeq <- readRDS(file.path(path.phylobj, agg_level, paste0("agglo_",datasets_names[i],".rds")))
-  
-  physeq_filt <- filtering(physeq, agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar)
-  fit_network(physeq_filt, agg_level)
+  filtering(datasets_names[i], agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar)
+  fit_network(datasets_names[i], agg_level)
   get_assoc_matrix(datasets_names[i], agg_level)
   get_network_properties(datasets_names[i], agg_level)
 }
+
+# Genus
+agg_level="Genus"
+filtTax = "highestVar"
+filtTaxPar = list(highestVar=100)
+filtSamp = "totalReads"
+filtSampPar = list(totalReads=500)
+
+for (i in 1:length(datasets_names)) {
+  filtering(datasets_names[i], agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar)
+  fit_network(datasets_names[i], agg_level)
+  get_assoc_matrix(datasets_names[i], agg_level)
+  get_network_properties(datasets_names[i], agg_level)
+}
+
 
 
 
