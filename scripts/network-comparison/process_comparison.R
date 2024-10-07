@@ -64,3 +64,34 @@ for (i in 1:length(datasets_names)) {
 }
 
 
+# Family
+agg_level="Family"
+filtTax = "numbSamp"
+filtTaxPar = list(numbSamp=5)
+filtSamp = "totalReads"
+filtSampPar = list(totalReads=500)
+
+for (i in 1:length(datasets_names)) {
+  preprocessing_comparison(datasets_names[i], agg_level)
+  filtering(datasets_names[i], agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar)
+  fit_network_comparison(datasets_names[i], agg_level)
+  get_assoc_matrix(datasets_names[i], agg_level)
+  get_network_properties(datasets_names[i], agg_level)
+}
+
+
+# Genus
+agg_level="Genus"
+filtTax = "highestVar"
+filtTaxPar = list(highestVar=100)
+filtSamp = "totalReads"
+filtSampPar = list(totalReads=500)
+
+for (i in 1:length(datasets_names)) {
+  preprocessing_comparison(datasets_names[i], agg_level)
+  filtering(datasets_names[i], agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar)
+  fit_network_comparison(datasets_names[i], agg_level)
+  get_assoc_matrix(datasets_names[i], agg_level)
+  get_network_properties(datasets_names[i], agg_level)
+}
+
