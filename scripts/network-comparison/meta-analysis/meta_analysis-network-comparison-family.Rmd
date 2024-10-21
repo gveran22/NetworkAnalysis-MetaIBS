@@ -1,0 +1,361 @@
+---
+title: "Meta Analysis"
+output:
+  html_document:
+    code_folding: hide
+date: "2024-03-01"
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE) 
+```
+
+```{r library-instalation}
+myPaths <- .libPaths()
+myPaths <- c(myPaths, "~/MetaIBS/MetaIBS-library")
+myPaths <- c(myPaths[3], myPaths[1], myPaths[2])
+.libPaths(myPaths)  # add new path
+```
+
+***********
+# 1. IMPORT
+***********
+
+## 1.1. Libraries
+
+```{r library-import}
+library(phyloseq) # Handling and analysis of high-throughput microbiome census data.
+library(tidyverse)
+library(ggplot2)
+library(SpiecEasi)
+library(igraph)
+library(VennDiagram)
+library(NetCoMi)
+```
+
+```{r path-directories, echo=FALSE}
+# ROOT DIRECTORY (to modify on your computer)
+path.root <- "~/MetaIBS"
+path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree")
+path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
+path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
+path.assoc_mat <- file.path(path.outputs , "association_matrices")
+path.phylobj_sep <- file.path(path.outputs , "phyloseq_IBS")
+path.plots <- file.path(path.outputs , "plots")
+
+source("~/MetaIBS/scripts/functions.R")
+datasets        <- list.files(path.datasets, pattern=".rds")
+datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+agg_level <- "Family"
+```
+
+
+******************
+# 2. META-ANALYSIS
+******************
+
+## GLasso
+
+```{r meta-analysis-glasso, fig.width=30, fig.height=13, echo=FALSE}
+
+matrices_H.gl <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[1]))
+  })
+
+matrices_IBS.gl <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[4]))
+  })
+
+meta_H.gl <- meta_analysis(matrices_H.gl, "mean")
+meta_IBS.gl <- meta_analysis(matrices_IBS.gl, "mean")
+
+props_asso_meta.gl <- network_construct_comparison(meta_H.gl, meta_IBS.gl)
+
+result <- plot(props_asso_meta.gl,
+       repulsion = 0.50008,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = "Meta-Analysis",
+       groupNames = c("Healthy", "IBS"),
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")
+
+
+```
+
+
+```{r, fig.width=30, fig.height=16, echo=FALSE}
+layout <- result$layout$layout1
+
+for (i in seq_along(matrices_H.gl)) {
+  load(file.path(path.phylobj_sep, agg_level, paste0("HostDisease_",datasets_names[i],".RData")))
+  dim_vec <- c(paste0("Healthy: (", dim(physeq_H@otu_table)[2], ",", dim(physeq_H@otu_table)[1], ")"), 
+               paste0("IBS: (", dim(physeq_IBS@otu_table)[2], ",", dim(physeq_IBS@otu_table)[1], ")"))
+  
+  # Create a copy of the meta matrix to modify
+  filtered_meta_adj_H <- meta_H.gl
+  filtered_meta_adj_IBS <- meta_IBS.gl
+  
+  sub_adj_H <- matrices_H.gl[[i]]
+  sub_adj_IBS <- matrices_IBS.gl[[i]]
+  
+  # Check if the off-diagonal elements of sub_adj_H and sub_adj_IBS are all zero
+  off_diag_H <- sub_adj_H
+  diag(off_diag_H) <- 0  # Set diagonal elements to zero to focus on off-diagonal
+  
+  off_diag_IBS <- sub_adj_IBS
+  diag(off_diag_IBS) <- 0  # Set diagonal elements to zero to focus on off-diagonal
+  
+  if (sum(off_diag_H) != 0 || sum(off_diag_IBS) != 0) {
+    # Find the common row and column names between meta_adj and sub_adj
+    common_rows_H <- intersect(rownames(meta_H.gl), rownames(sub_adj_H))
+    common_cols_H <- intersect(colnames(meta_H.gl), colnames(sub_adj_H))
+    
+    common_rows_IBS <- intersect(rownames(meta_IBS.gl), rownames(sub_adj_IBS))
+    common_cols_IBS <- intersect(colnames(meta_IBS.gl), colnames(sub_adj_IBS))
+    
+    # Set all elements in the large matrix to 0 initially
+    filtered_meta_adj_H[,] <- 0
+    filtered_meta_adj_IBS[,] <- 0
+    
+    # Now only retain the edges in the large matrix that overlap with the small matrix
+    filtered_meta_adj_H[common_rows_H, common_cols_H] <- meta_H.gl[common_rows_H, common_cols_H] * (sub_adj_H[common_rows_H, common_cols_H] != 0)
+    filtered_meta_adj_IBS[common_rows_IBS, common_cols_IBS] <- meta_IBS.gl[common_rows_IBS, common_cols_IBS] * (sub_adj_IBS[common_rows_IBS, common_cols_IBS] != 0)
+  
+    props_asso.gl <- network_construct_comparison(filtered_meta_adj_H,filtered_meta_adj_IBS)
+  
+   
+    plot(props_asso.gl,
+         layout = layout,
+         nodeColor = "cluster",
+         labelScale = FALSE,
+         rmSingles = "none",
+         nodeSize = "eigenvector",
+         cexNodes = 0.58,
+         cexLabels = 1.5,
+         cexHubLabels = 1.7,
+         groupNames = c(paste0("Healthy - ", str_to_title(datasets_names[i])), 
+                        paste0("IBS - ", str_to_title(datasets_names[i]))),
+         cexTitle = 2.5,
+         hubBorderCol  = "gray40")
+    # legend("bottom", title = "Dimensions:", legend = dim_vec, col = c("#009900","red"),  cex = 2,  
+    #    pch=16, bty = "n")
+   }else {
+    # Skip plotting if no connected nodes are found
+    message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+   }
+  
+}
+
+```
+
+## MB
+
+```{r meta-analysis-mb, fig.width=30, fig.height=14, echo=FALSE}
+
+matrices_H.mb <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[2]))
+  })
+
+matrices_IBS.mb <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[5]))
+  })
+
+meta_H.mb <- meta_analysis(matrices_H.mb, "mean")
+meta_IBS.mb <- meta_analysis(matrices_IBS.mb, "mean")
+
+props_asso_meta.mb <- network_construct_comparison(meta_H.mb, meta_IBS.mb)
+
+result.mb <- plot(props_asso_meta.mb,
+                  repulsion = 0.50212,
+       #layout = layout,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = "Meta-Analysis",
+       groupNames = c("Healthy", "IBS"),
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")
+
+```
+
+```{r, fig.width=30, fig.height=15, echo=FALSE}
+layout.mb <- result.mb$layout$layout1
+
+
+for (i in seq_along(matrices_H.mb)) {
+  # Create a copy of the meta matrix to modify
+  filtered_meta_adj_H <- meta_H.mb
+  filtered_meta_adj_IBS <- meta_IBS.mb
+  
+  sub_adj_H <- matrices_H.mb[[i]]
+  sub_adj_IBS <- matrices_IBS.mb[[i]]
+  
+  # Check if the off-diagonal elements of sub_adj_H and sub_adj_IBS are all zero
+  off_diag_H <- sub_adj_H
+  diag(off_diag_H) <- 0  # Set diagonal elements to zero to focus on off-diagonal
+  
+  off_diag_IBS <- sub_adj_IBS
+  diag(off_diag_IBS) <- 0  # Set diagonal elements to zero to focus on off-diagonal
+  
+  if (sum(off_diag_H) != 0 || sum(off_diag_IBS) != 0) {
+    # Find the common row and column names between meta_adj and sub_adj
+    common_rows_H <- intersect(rownames(meta_H.gl), rownames(sub_adj_H))
+    common_cols_H <- intersect(colnames(meta_H.gl), colnames(sub_adj_H))
+    
+    common_rows_IBS <- intersect(rownames(meta_IBS.gl), rownames(sub_adj_IBS))
+    common_cols_IBS <- intersect(colnames(meta_IBS.gl), colnames(sub_adj_IBS))
+    
+    # Set all elements in the large matrix to 0 initially
+    filtered_meta_adj_H[,] <- 0
+    filtered_meta_adj_IBS[,] <- 0
+    
+    # Now only retain the edges in the large matrix that overlap with the small matrix
+    filtered_meta_adj_H[common_rows_H, common_cols_H] <- meta_H.mb[common_rows_H, common_cols_H] * (sub_adj_H[common_rows_H, common_cols_H] != 0)
+    filtered_meta_adj_IBS[common_rows_IBS, common_cols_IBS] <- meta_IBS.mb[common_rows_IBS, common_cols_IBS] * (sub_adj_IBS[common_rows_IBS, common_cols_IBS] != 0)
+  
+    props_asso.mb <- network_construct_comparison(filtered_meta_adj_H,filtered_meta_adj_IBS)
+  
+   
+    plot(props_asso.mb,
+         layout = layout.mb,
+         nodeColor = "cluster",
+         labelScale = FALSE,
+         rmSingles = "none",
+         nodeSize = "eigenvector",
+         cexNodes = 0.58,
+         cexLabels = 1.5,
+         cexHubLabels = 1.7,
+         groupNames = c(paste0("Healthy - ", str_to_title(datasets_names[i])), 
+                        paste0("IBS - ", str_to_title(datasets_names[i]))),
+         cexTitle = 2,
+         hubBorderCol  = "gray40")
+   }else {
+    # Skip plotting if no connected nodes are found
+    message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+   }
+}
+
+```
+
+
+## SLR
+
+```{r meta-analysis-slr, fig.width=30, fig.height=15, echo=FALSE}
+
+matrices_H.slr <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[3]))
+  })
+
+matrices_IBS.slr <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[6]))
+  })
+
+meta_H.slr <- meta_analysis(matrices_H.slr, "mean")
+meta_IBS.slr <- meta_analysis(matrices_IBS.slr, "mean")
+
+props_asso_meta.slr <- network_construct_comparison(meta_H.slr, meta_IBS.slr)
+
+#props.slr <- props_asso_meta.slr$lccNames1 
+#layout.slr <- layout[rownames(layout) %in% props.slr,]
+
+result.slr <- plot(props_asso_meta.slr,
+               repulsion = 0.6000,
+       #layout = layout.slr,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = "Meta-Analysis",
+       groupNames = c("Healthy", "IBS"),
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")
+```
+
+```{r, fig.width=30, fig.height=16, echo=FALSE}
+layout.slr <- result.slr$layout$layout1
+
+for (i in seq_along(matrices_H.slr)) {
+  # Create a copy of the meta matrix to modify
+  filtered_meta_adj_H <- meta_H.slr
+  filtered_meta_adj_IBS <- meta_IBS.slr
+  
+  sub_adj_H <- matrices_H.slr[[i]]
+  sub_adj_IBS <- matrices_IBS.slr[[i]]
+  
+  # Check if the off-diagonal elements of sub_adj_H and sub_adj_IBS are all zero
+  off_diag_H <- sub_adj_H
+  diag(off_diag_H) <- 0  # Set diagonal elements to zero to focus on off-diagonal
+  
+  off_diag_IBS <- sub_adj_IBS
+  diag(off_diag_IBS) <- 0  # Set diagonal elements to zero to focus on off-diagonal
+  
+  if (sum(off_diag_H) != 0 || sum(off_diag_IBS) != 0) {
+    # Find the common row and column names between meta_adj and sub_adj
+    common_rows_H <- intersect(rownames(meta_H.gl), rownames(sub_adj_H))
+    common_cols_H <- intersect(colnames(meta_H.gl), colnames(sub_adj_H))
+    
+    common_rows_IBS <- intersect(rownames(meta_IBS.gl), rownames(sub_adj_IBS))
+    common_cols_IBS <- intersect(colnames(meta_IBS.gl), colnames(sub_adj_IBS))
+    
+    # Set all elements in the large matrix to 0 initially
+    filtered_meta_adj_H[,] <- 0
+    filtered_meta_adj_IBS[,] <- 0
+    
+    # Now only retain the edges in the large matrix that overlap with the small matrix
+    filtered_meta_adj_H[common_rows_H, common_cols_H] <- meta_H.slr[common_rows_H, common_cols_H] * (sub_adj_H[common_rows_H, common_cols_H] != 0)
+    filtered_meta_adj_IBS[common_rows_IBS, common_cols_IBS] <- meta_IBS.slr[common_rows_IBS, common_cols_IBS] * (sub_adj_IBS[common_rows_IBS, common_cols_IBS] != 0)
+  
+    props_asso.slr <- network_construct_comparison(filtered_meta_adj_H,filtered_meta_adj_IBS)
+  
+   
+    plot(props_asso.slr,
+         layout = layout.slr,
+         nodeColor = "cluster",
+         labelScale = FALSE,
+         rmSingles = "none",
+         nodeSize = "eigenvector",
+         cexNodes = 0.58,
+         cexLabels = 1.5,
+         cexHubLabels = 1.7,
+         groupNames = c(paste0("Healthy - ", str_to_title(datasets_names[i])), 
+                        paste0("IBS - ", str_to_title(datasets_names[i]))),
+         cexTitle = 2,
+         hubBorderCol  = "gray40")
+   }else {
+    # Skip plotting if no connected nodes are found
+    message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+   }
+}
+
+```
