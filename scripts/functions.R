@@ -48,6 +48,27 @@ network_construct <- function(assoMat){
 }
 
 
+network_construct_comparison <- function(assoMat1,assoMat2){
+  
+  # Network construction and analysis
+  net_asso_p <- netConstruct(data = assoMat1,
+                             data2 = assoMat2,
+                             dataType = "condDependence",
+                             sparsMethod = "none",
+                             verbose = 0)
+  
+  props_asso <- netAnalyze(net_asso_p, 
+                           centrLCC = FALSE,
+                           avDissIgnoreInf = TRUE,
+                           sPathNorm = FALSE,
+                           clustMethod = "cluster_fast_greedy",
+                           hubPar = "eigenvector",
+                           hubQuant = 0.9,
+                           gcmHeat = FALSE)
+  return(props_asso)
+}
+
+
 get_network <- function(assoc.matrix, network_name, method, 
                         dataType = "condDependence", sparsMethod = "none",
                         thresh = 0, doPlot=T){

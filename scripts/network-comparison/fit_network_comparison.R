@@ -6,7 +6,7 @@
 
 source("scripts/functions.R")
 
-fit_network <- function(physeq_name, agg_level){
+fit_network_comparison <- function(physeq_name, agg_level){
   
   # Read the phyloseq object
   load(file.path(path.filt_phy, agg_level, 
@@ -14,29 +14,29 @@ fit_network <- function(physeq_name, agg_level){
   
   pargs <- list(thresh=0.1, rep.num=60, seed=10010, ncores=20)
   
-  se_IBS.gl <- spiec.easi(physeq_filt_IBS, method='glasso', nlambda=50,
-                      lambda.min.ratio=1e-3, lambda.log=FALSE,
+  se_IBS.gl <- spiec.easi(physeq_filt_IBS, method='glasso', nlambda=100,
+                      lambda.min.ratio=1e-3, #lambda.log=FALSE,
                       pulsar.select=TRUE, pulsar.params=pargs)
-  se_H.gl <- spiec.easi(physeq_filt_H, method='glasso', nlambda=50,
-                      lambda.min.ratio=1e-3, lambda.log=FALSE,
+  se_H.gl <- spiec.easi(physeq_filt_H, method='glasso', nlambda=100,
+                      lambda.min.ratio=1e-3, #lambda.log=FALSE,
                       pulsar.select=TRUE, pulsar.params=pargs)
   
-  se_IBS.mb <- spiec.easi(physeq_filt_IBS, method='mb', nlambda=50,
-                      lambda.min.ratio=1e-3, lambda.log=FALSE,
+  se_IBS.mb <- spiec.easi(physeq_filt_IBS, method='mb', nlambda=100,
+                      lambda.min.ratio=1e-3, #lambda.log=FALSE,
                       pulsar.select=TRUE, pulsar.params=pargs)
-  se_H.mb <- spiec.easi(physeq_filt_H, method='mb', nlambda=50,
-                          lambda.min.ratio=1e-3, lambda.log=FALSE,
+  se_H.mb <- spiec.easi(physeq_filt_H, method='mb', nlambda=100,
+                          lambda.min.ratio=1e-3, #lambda.log=FALSE,
                           pulsar.select=TRUE, pulsar.params=pargs)
   
   
   ranks_IBS <- rank.slr(physeq_filt_IBS)
   ranks_H <- rank.slr(physeq_filt_H)
   
-  se_IBS.slr <- spiec.easi(physeq_filt_IBS, method='slr', nlambda=50,
-                       lambda.min.ratio=1e-3, r=ranks_IBS, lambda.log=FALSE,
+  se_IBS.slr <- spiec.easi(physeq_filt_IBS, method='slr', nlambda=100,
+                       lambda.min.ratio=1e-3, r=ranks_IBS, #lambda.log=FALSE,
                        pulsar.select=TRUE, pulsar.params=pargs)
-  se_H.slr <- spiec.easi(physeq_filt_H, method='slr', nlambda=50,
-                       lambda.min.ratio=1e-3, r=ranks_H, lambda.log=FALSE,
+  se_H.slr <- spiec.easi(physeq_filt_H, method='slr', nlambda=100,
+                       lambda.min.ratio=1e-3, r=ranks_H, #lambda.log=FALSE,
                        pulsar.select=TRUE, pulsar.params=pargs)
   
   se_IBS.slr$ebic <- sapply(se_IBS.slr, function(x)
