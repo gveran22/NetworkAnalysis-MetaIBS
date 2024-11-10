@@ -1,13 +1,13 @@
 ---
-title: "Meta Analysis"
-output:
-  html_document:
-    code_folding: hide
+title: "Meta Analysis - Network Comparison (Family)"
+output: 
+  github_document:
+    html_preview: false
 date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE) 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="images/family/") 
 ```
 
 ```{r library-instalation}
@@ -73,7 +73,7 @@ matrices_IBS.gl <- lapply(datasets_names, function(x) {
 meta_H.gl <- meta_analysis(matrices_H.gl, "mean")
 meta_IBS.gl <- meta_analysis(matrices_IBS.gl, "mean")
 
-props_asso_meta.gl <- network_construct_comparison(meta_H.gl, meta_IBS.gl)
+props_asso_meta.gl <- network_construct_comparison(meta_H.gl, meta_IBS.gl, thresh = 0.1)
 
 result <- plot(props_asso_meta.gl,
        repulsion = 0.50008,
@@ -95,7 +95,7 @@ result <- plot(props_asso_meta.gl,
 ```
 
 
-```{r, fig.width=30, fig.height=16, echo=FALSE}
+```{r single-network-glasso, fig.width=30, fig.height=16, echo=FALSE}
 layout <- result$layout$layout1
 
 for (i in seq_along(matrices_H.gl)) {
@@ -140,7 +140,7 @@ for (i in seq_along(matrices_H.gl)) {
          layout = layout,
          nodeColor = "cluster",
          labelScale = FALSE,
-         rmSingles = "none",
+         rmSingles = TRUE,
          nodeSize = "eigenvector",
          cexNodes = 0.58,
          cexLabels = 1.5,
@@ -179,7 +179,7 @@ matrices_IBS.mb <- lapply(datasets_names, function(x) {
 meta_H.mb <- meta_analysis(matrices_H.mb, "mean")
 meta_IBS.mb <- meta_analysis(matrices_IBS.mb, "mean")
 
-props_asso_meta.mb <- network_construct_comparison(meta_H.mb, meta_IBS.mb)
+props_asso_meta.mb <- network_construct_comparison(meta_H.mb, meta_IBS.mb, thresh = 0.1)
 
 result.mb <- plot(props_asso_meta.mb,
                   repulsion = 0.50212,
@@ -200,7 +200,7 @@ result.mb <- plot(props_asso_meta.mb,
 
 ```
 
-```{r, fig.width=30, fig.height=15, echo=FALSE}
+```{r single-network-mb, fig.width=30, fig.height=15, echo=FALSE}
 layout.mb <- result.mb$layout$layout1
 
 
@@ -242,7 +242,7 @@ for (i in seq_along(matrices_H.mb)) {
          layout = layout.mb,
          nodeColor = "cluster",
          labelScale = FALSE,
-         rmSingles = "none",
+         rmSingles = TRUE,
          nodeSize = "eigenvector",
          cexNodes = 0.58,
          cexLabels = 1.5,
@@ -279,7 +279,7 @@ matrices_IBS.slr <- lapply(datasets_names, function(x) {
 meta_H.slr <- meta_analysis(matrices_H.slr, "mean")
 meta_IBS.slr <- meta_analysis(matrices_IBS.slr, "mean")
 
-props_asso_meta.slr <- network_construct_comparison(meta_H.slr, meta_IBS.slr)
+props_asso_meta.slr <- network_construct_comparison(meta_H.slr, meta_IBS.slr, thresh = 0.1)
 
 #props.slr <- props_asso_meta.slr$lccNames1 
 #layout.slr <- layout[rownames(layout) %in% props.slr,]
@@ -302,7 +302,7 @@ result.slr <- plot(props_asso_meta.slr,
        hubBorderCol  = "gray40")
 ```
 
-```{r, fig.width=30, fig.height=16, echo=FALSE}
+```{r single-network-slr, fig.width=30, fig.height=16, echo=FALSE}
 layout.slr <- result.slr$layout$layout1
 
 for (i in seq_along(matrices_H.slr)) {
@@ -343,7 +343,7 @@ for (i in seq_along(matrices_H.slr)) {
          layout = layout.slr,
          nodeColor = "cluster",
          labelScale = FALSE,
-         rmSingles = "none",
+         rmSingles = TRUE,
          nodeSize = "eigenvector",
          cexNodes = 0.58,
          cexLabels = 1.5,

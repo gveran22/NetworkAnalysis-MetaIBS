@@ -1,13 +1,13 @@
 ---
-title: "Meta Analysis"
-output:
-  html_document:
-    code_folding: hide
+title: "Meta Analysis - Network Comparison (Order)"
+output: 
+  github_document:
+    html_preview: false
 date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE) 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="images/order/") 
 ```
 
 ```{r library-instalation}
@@ -94,7 +94,7 @@ result <- plot(props_asso_meta.gl,
 ```
 
 
-```{r, fig.width=30, fig.height=16, echo=FALSE}
+```{r single-network-glasso, fig.width=30, fig.height=16, echo=FALSE}
 layout <- result$layout$layout1
 
 for (i in seq_along(matrices_H.gl)) {
@@ -192,7 +192,7 @@ result <- plot(props_asso_meta.mb,
 
 ```
 
-```{r, fig.width=30, fig.height=15, echo=FALSE}
+```{r single-network-mb, fig.width=30, fig.height=15, echo=FALSE}
 
 for (i in seq_along(matrices_H.mb)) {
   # Create a copy of the meta matrix to modify
@@ -291,7 +291,7 @@ result <- plot(props_asso_meta.slr,
        hubBorderCol  = "gray40")
 ```
 
-```{r, fig.width=30, fig.height=16, echo=FALSE}
+```{r single-network-slr, fig.width=30, fig.height=16, echo=FALSE}
 
 for (i in seq_along(matrices_H.slr)) {
   # Create a copy of the meta matrix to modify
