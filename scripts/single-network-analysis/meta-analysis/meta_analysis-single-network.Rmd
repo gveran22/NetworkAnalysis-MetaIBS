@@ -1,5 +1,5 @@
 ---
-title: "Your Document Title"
+title: "Meta analysis - Single Network Anaylsis"
 output: 
   github_document:
     html_preview: false
@@ -7,7 +7,7 @@ date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE) 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="images/single-network-analysis/family") 
 ```
 
 ```{r library-instalation}

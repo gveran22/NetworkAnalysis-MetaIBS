@@ -52,15 +52,19 @@ network_construct <- function(assoMat, thresh=0){
 }
 
 
-network_construct_comparison <- function(assoMat1,assoMat2){
+network_construct_comparison <- function(assoMat1,assoMat2, thresh = 0){
   
   # Network construction and analysis
   net_asso_p <- netConstruct(data = assoMat1,
                              data2 = assoMat2,
                              dataType = "condDependence",
-                             sparsMethod = "none",
+                             sparsMethod = "threshold",
+                             thresh = thresh,
+                             normMethod = "none", 
+                             zeroMethod = "none",
+                             dissFunc = "signed",
                              verbose = 0)
-  
+
   props_asso <- netAnalyze(net_asso_p, 
                            centrLCC = FALSE,
                            avDissIgnoreInf = TRUE,
