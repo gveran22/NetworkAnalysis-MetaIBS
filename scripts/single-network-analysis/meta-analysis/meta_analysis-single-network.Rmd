@@ -1,0 +1,275 @@
+---
+title: "Your Document Title"
+output: 
+  github_document:
+    html_preview: false
+date: "2024-03-01"
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE) 
+```
+
+```{r library-instalation}
+myPaths <- .libPaths()
+myPaths <- c(myPaths, "~/MetaIBS/MetaIBS-library")
+myPaths <- c(myPaths[3], myPaths[1], myPaths[2])
+.libPaths(myPaths)  # add new path
+```
+
+***********
+# 1. IMPORT
+***********
+
+## 1.1. Libraries
+
+```{r library-import}
+library(phyloseq) # Handling and analysis of high-throughput microbiome census data.
+library(tidyverse)
+library(ggplot2)
+library(SpiecEasi)
+library(igraph)
+library(VennDiagram)
+library(NetCoMi)
+```
+
+```{r path-directories, echo=FALSE}
+# ROOT DIRECTORY (to modify on your computer)
+path.root <- "~/MetaIBS"
+path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree")
+path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
+path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
+path.assoc_mat <- file.path(path.outputs , "association_matrices")
+path.plots <- file.path(path.outputs , "plots")
+
+source("~/MetaIBS/scripts/functions.R")
+datasets        <- list.files(path.datasets, pattern=".rds")
+datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+agg_level <- "Family"
+```
+
+
+******************
+# 2. META-ANALYSIS
+******************
+
+## GLasso
+
+
+```{r meta-analysis-glasso, fig.width=18, fig.height=15, echo=FALSE}
+matrices.gl <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[1]))
+  })
+
+meta.gl <- meta_analysis(matrices.gl, "mean")
+props_asso_meta.gl <- network_construct(meta.gl, thresh=0.2)
+# 
+# png(file.path(path.plots, agg_level, paste0("Meta-Analysis.png")),
+#       width=1800, height=1400)
+result <- plot(props_asso_meta.gl,
+       repulsion = 0.4900003,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = "Meta-Analysis",
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")#,
+    # doPlot = F)$layout$layout1
+
+
+```
+
+
+```{r, fig.width=18, fig.height=16, echo=FALSE}
+layout <- result$layout$layout1
+
+for (i in seq_along(matrices.gl)) {
+  physeq <- readRDS(file=file.path(path.phylobj, agg_level, paste0("agglo_",datasets_names[i],".rds")))
+  dm <- dim(physeq@otu_table)
+  # Create a copy of the meta matrix to modify
+  filtered_meta_adj <- meta.gl
+  
+  sub_adj <- matrices.gl[[i]]
+  
+  # Find the common row and column names between meta_adj and sub_adj
+  common_rows <- intersect(rownames(meta.gl), rownames(sub_adj))
+  common_cols <- intersect(colnames(meta.gl), colnames(sub_adj))
+  
+  # Set all elements in the large matrix to 0 initially
+  filtered_meta_adj[,] <- 0
+  
+  # Now only retain the edges in the large matrix that overlap with the small matrix
+  filtered_meta_adj[common_rows, common_cols] <- meta.gl[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+  
+  props_asso.gl <- network_construct(filtered_meta_adj)
+  plot(props_asso.gl,
+       layout = layout,
+           nodeColor = "cluster",
+           labelScale = FALSE,
+             rmSingles = "none",#TRUE,
+             nodeSize = "eigenvector",
+             cexNodes = 0.58,
+             cexLabels = 1.5,
+             cexHubLabels = 1.7,
+             title1 = paste0("Network Analysis ", str_to_title(datasets_names[i])),
+             showTitle = TRUE,
+             cexTitle = 2,
+             hubBorderCol  = "gray40")
+  
+  legend("bottomright", title = "Dimensions", 
+         legend = c(paste0("# of taxas", dm[2]),paste0("# of samples", dm[1])), 
+         bty = "n", horiz = TRUE)
+}
+
+
+```
+
+## MB
+
+```{r meta-analysis-mb, fig.width=18, fig.height=15, echo=FALSE}
+
+#fig.width=18.75, fig.height=14.58
+matrices.mb <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[2]))
+  })
+
+meta.mb <- meta_analysis(matrices.mb, "mean")
+props_asso_meta.mb <- network_construct(meta.mb, thresh=0.1)
+# 
+# png(file.path(path.plots, agg_level, paste0("Meta-Analysis.png")),
+#       width=1800, height=1400)
+
+result.mb <- plot(props_asso_meta.mb,
+     repulsion = 0.500001,
+       #layout = layout,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = "Meta-Analysis",
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")
+
+```
+
+```{r, fig.width=18, fig.height=16, echo=FALSE}
+layout.mb <- result.mb$layout$layout1
+
+for (i in seq_along(matrices.mb)) {
+  # Create a copy of the meta matrix to modify
+  filtered_meta_adj <- meta.mb
+  
+  sub_adj <- matrices.mb[[i]]
+  
+  # Find the common row and column names between meta_adj and sub_adj
+  common_rows <- intersect(rownames(meta.mb), rownames(sub_adj))
+  common_cols <- intersect(colnames(meta.mb), colnames(sub_adj))
+  
+  # Set all elements in the large matrix to 0 initially
+  filtered_meta_adj[,] <- 0
+  
+  # Now only retain the edges in the large matrix that overlap with the small matrix
+  filtered_meta_adj[common_rows, common_cols] <- meta.mb[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+  
+  props_asso.mb <- network_construct(filtered_meta_adj)
+  plot(props_asso.mb,
+       layout = layout.mb,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = "none",
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = paste0("Network Analysis ", str_to_title(datasets_names[i])),
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")
+}
+
+```
+
+
+## SLR
+
+```{r meta-analysis-slr, fig.width=18, fig.height=16, echo=FALSE}
+
+#fig.width=18.75, fig.height=14.58
+matrices.slr <- lapply(datasets_names, function(x) {
+  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
+  objects <- ls()
+  return(get(objects[3]))
+  })
+
+meta.slr <- meta_analysis(matrices.slr, "mean")
+props_asso_meta.slr <- network_construct(meta.slr, thresh=0)
+# 
+# png(file.path(path.plots, agg_level, paste0("Meta-Analysis.png")),
+#       width=1800, height=1400)
+
+result.slr <- plot(props_asso_meta.slr,
+     #repulsion = 0.6012,
+      layout = layout,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = "Meta-Analysis",
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")
+
+```
+
+```{r, fig.width=18, fig.height=16, echo=FALSE}
+layout.slr <- result.slr$layout$layout1
+
+for (i in seq_along(matrices.slr)) {
+  # Create a copy of the meta matrix to modify
+  filtered_meta_adj <- meta.slr
+  
+  sub_adj <- matrices.slr[[i]]
+  
+  # Find the common row and column names between meta_adj and sub_adj
+  common_rows <- intersect(rownames(meta.slr), rownames(sub_adj))
+  common_cols <- intersect(colnames(meta.slr), colnames(sub_adj))
+  
+  # Set all elements in the large matrix to 0 initially
+  filtered_meta_adj[,] <- 0
+  
+  # Now only retain the edges in the large matrix that overlap with the small matrix
+  filtered_meta_adj[common_rows, common_cols] <- meta.slr[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+  
+  props_asso.slr <- network_construct(filtered_meta_adj)
+  plot(props_asso.slr,
+       layout = layout.slr,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = "none",
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       title1 = paste0("Network Analysis ", str_to_title(datasets_names[i])),
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol  = "gray40")
+}
+
+```
