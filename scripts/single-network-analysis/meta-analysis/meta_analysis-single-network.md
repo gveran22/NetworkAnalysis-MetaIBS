@@ -35,18 +35,18 @@ library(NetCoMi)
 
 ## GLasso
 
-![](images/single-network-analysis/familymeta-analysis-glasso-1.png)<!-- -->
+![](images/family/meta-analysis-glasso-1.png)<!-- -->
 
-![](images/single-network-analysis/familyunnamed-chunk-1-1.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-2.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-3.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-4.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-5.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-6.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-7.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-8.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-9.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-10.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-11.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-1-12.png)<!-- -->
+![](images/family/single-network-glasso-1.png)<!-- -->![](images/family/single-network-glasso-2.png)<!-- -->![](images/family/single-network-glasso-3.png)<!-- -->![](images/family/single-network-glasso-4.png)<!-- -->![](images/family/single-network-glasso-5.png)<!-- -->![](images/family/single-network-glasso-6.png)<!-- -->![](images/family/single-network-glasso-7.png)<!-- -->![](images/family/single-network-glasso-8.png)<!-- -->![](images/family/single-network-glasso-9.png)<!-- -->![](images/family/single-network-glasso-10.png)<!-- -->![](images/family/single-network-glasso-11.png)<!-- -->![](images/family/single-network-glasso-12.png)<!-- -->
 
 ## MB
 
-![](images/single-network-analysis/familymeta-analysis-mb-1.png)<!-- -->
+![](images/family/meta-analysis-mb-1.png)<!-- -->
 
-![](images/single-network-analysis/familyunnamed-chunk-2-1.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-2.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-3.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-4.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-5.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-6.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-7.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-8.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-9.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-10.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-11.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-2-12.png)<!-- -->
+![](images/family/single-network-mb-1.png)<!-- -->![](images/family/single-network-mb-2.png)<!-- -->![](images/family/single-network-mb-3.png)<!-- -->![](images/family/single-network-mb-4.png)<!-- -->![](images/family/single-network-mb-5.png)<!-- -->![](images/family/single-network-mb-6.png)<!-- -->![](images/family/single-network-mb-7.png)<!-- -->![](images/family/single-network-mb-8.png)<!-- -->![](images/family/single-network-mb-9.png)<!-- -->![](images/family/single-network-mb-10.png)<!-- -->![](images/family/single-network-mb-11.png)<!-- -->![](images/family/single-network-mb-12.png)<!-- -->
 
 ## SLR
 
-![](images/single-network-analysis/familymeta-analysis-slr-1.png)<!-- -->
+![](images/family/meta-analysis-slr-1.png)<!-- -->
 
-![](images/single-network-analysis/familyunnamed-chunk-3-1.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-2.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-3.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-4.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-5.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-6.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-7.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-8.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-9.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-10.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-11.png)<!-- -->![](images/single-network-analysis/familyunnamed-chunk-3-12.png)<!-- -->
+![](images/family/single-network-slr-1.png)<!-- -->![](images/family/single-network-slr-2.png)<!-- -->![](images/family/single-network-slr-3.png)<!-- -->![](images/family/single-network-slr-4.png)<!-- -->![](images/family/single-network-slr-5.png)<!-- -->![](images/family/single-network-slr-6.png)<!-- -->![](images/family/single-network-slr-7.png)<!-- -->![](images/family/single-network-slr-8.png)<!-- -->![](images/family/single-network-slr-9.png)<!-- -->![](images/family/single-network-slr-10.png)<!-- -->![](images/family/single-network-slr-11.png)<!-- -->![](images/family/single-network-slr-12.png)<!-- -->

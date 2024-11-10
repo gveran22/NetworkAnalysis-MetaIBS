@@ -7,7 +7,7 @@ date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="images/single-network-analysis/family") 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="images/family/") 
 ```
 
 ```{r library-instalation}
@@ -64,7 +64,7 @@ matrices.gl <- lapply(datasets_names, function(x) {
   })
 
 meta.gl <- meta_analysis(matrices.gl, "mean")
-props_asso_meta.gl <- network_construct(meta.gl, thresh=0.2)
+props_asso_meta.gl <- network_construct(meta.gl, thresh=0.1)
 # 
 # png(file.path(path.plots, agg_level, paste0("Meta-Analysis.png")),
 #       width=1800, height=1400)
@@ -87,7 +87,7 @@ result <- plot(props_asso_meta.gl,
 ```
 
 
-```{r, fig.width=18, fig.height=16, echo=FALSE}
+```{r single-network-glasso, fig.width=18, fig.height=16, echo=FALSE}
 layout <- result$layout$layout1
 
 for (i in seq_along(matrices.gl)) {
@@ -165,7 +165,7 @@ result.mb <- plot(props_asso_meta.mb,
 
 ```
 
-```{r, fig.width=18, fig.height=16, echo=FALSE}
+```{r single-network-mb, fig.width=18, fig.height=16, echo=FALSE}
 layout.mb <- result.mb$layout$layout1
 
 for (i in seq_along(matrices.mb)) {
@@ -237,7 +237,7 @@ result.slr <- plot(props_asso_meta.slr,
 
 ```
 
-```{r, fig.width=18, fig.height=16, echo=FALSE}
+```{r single-network-slr, fig.width=18, fig.height=16, echo=FALSE}
 layout.slr <- result.slr$layout$layout1
 
 for (i in seq_along(matrices.slr)) {
