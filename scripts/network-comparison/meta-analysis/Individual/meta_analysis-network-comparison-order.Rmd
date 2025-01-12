@@ -7,7 +7,7 @@ date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="~/MetaIBS/outputs/network-comparison/Individual/plots/Order/") 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../../../outputs/network-comparison/Individual/plots/Order/") 
 ```
 
 ```{r library-instalation}
