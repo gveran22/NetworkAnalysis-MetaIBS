@@ -55,6 +55,7 @@ agg_level <- "Order"
 
 ## GLasso
 
+### Meta-Analysis Plot
 ```{r meta-analysis-glasso, fig.width=30, fig.height=13, echo=FALSE}
 
 matrices_H.gl <- lapply(datasets_names, function(x) {
@@ -85,7 +86,7 @@ result <- plot(props_asso_meta.gl,
        cexLabels = 1.5,
        cexHubLabels = 1.7,
        title1 = "Meta-Analysis",
-       groupNames = c("Healthy", "IBS"),
+       groupNames = c("Healthy - MetaAnalysis", "IBS - MetaAnalysis"),
        showTitle = TRUE,
        cexTitle = 2,
        hubBorderCol  = "gray40")
@@ -93,6 +94,7 @@ result <- plot(props_asso_meta.gl,
 
 ```
 
+### Individual Plots
 
 ```{r single-network-glasso, fig.width=30, fig.height=16, echo=FALSE}
 layout <- result$layout$layout1
@@ -155,6 +157,8 @@ for (i in seq_along(matrices_H.gl)) {
 
 ## MB
 
+### Meta-Analysis Plot
+
 ```{r meta-analysis-mb, fig.width=30, fig.height=15, echo=FALSE}
 
 matrices_H.mb <- lapply(datasets_names, function(x) {
@@ -185,12 +189,14 @@ result <- plot(props_asso_meta.mb,
        cexLabels = 1.5,
        cexHubLabels = 1.7,
        title1 = "Meta-Analysis",
-       groupNames = c("Healthy", "IBS"),
+       groupNames = c("Healthy - MetaAnalysis", "IBS - MetaAnalysis"),
        showTitle = TRUE,
        cexTitle = 2,
        hubBorderCol  = "gray40")
 
 ```
+
+### Individual Plots
 
 ```{r single-network-mb, fig.width=30, fig.height=15, echo=FALSE}
 
@@ -252,6 +258,7 @@ for (i in seq_along(matrices_H.mb)) {
 
 ## SLR
 
+### Meta-Analysis Plot
 ```{r meta-analysis-slr, fig.width=30, fig.height=15, echo=FALSE}
 
 matrices_H.slr <- lapply(datasets_names, function(x) {
@@ -285,11 +292,13 @@ result <- plot(props_asso_meta.slr,
        cexLabels = 1.5,
        cexHubLabels = 1.7,
        title1 = "Meta-Analysis",
-       groupNames = c("Healthy", "IBS"),
+       groupNames = c("Healthy - MetaAnalysis", "IBS - MetaAnalysis"),
        showTitle = TRUE,
        cexTitle = 2,
        hubBorderCol  = "gray40")
 ```
+
+### Individual Plots
 
 ```{r single-network-slr, fig.width=30, fig.height=16, echo=FALSE}
 

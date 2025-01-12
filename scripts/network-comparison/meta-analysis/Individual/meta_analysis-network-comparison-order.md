@@ -35,18 +35,30 @@ library(NetCoMi)
 
 ## GLasso
 
+### Meta-Analysis Plot
+
 ![](../../../../outputs/network-comparison/Individual/plots/Order/meta-analysis-glasso-1.png)<!-- -->
+
+### Individual Plots
 
 ![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-7.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-8.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-9.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-10.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-glasso-11.png)<!-- -->
 
 ## MB
 
+### Meta-Analysis Plot
+
 ![](../../../../outputs/network-comparison/Individual/plots/Order/meta-analysis-mb-1.png)<!-- -->
+
+### Individual Plots
 
 ![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-7.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-8.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-9.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-10.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-mb-11.png)<!-- -->
 
 ## SLR
 
+### Meta-Analysis Plot
+
 ![](../../../../outputs/network-comparison/Individual/plots/Order/meta-analysis-slr-1.png)<!-- -->
+
+### Individual Plots
 
 ![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-7.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-8.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-9.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-10.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-11.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/single-network-slr-12.png)<!-- -->
