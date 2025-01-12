@@ -188,7 +188,8 @@ glob_probs <- lapply(properties.gl, function(data) {
   })
 
 merged_df <- do.call(cbind, glob_probs)
-merged_df
+merged_df %>%
+  knitr::kable(format = "markdown") 
 
 ```
 
@@ -319,7 +320,8 @@ glob_probs.mb <- lapply(properties.mb, function(data) {
   })
 
 merged_df <- do.call(cbind, glob_probs.mb)
-merged_df
+merged_df %>%
+  knitr::kable(format = "markdown") 
 
 ```
 
@@ -451,6 +453,7 @@ glob_probs.slr <- lapply(properties.slr, function(data) {
   })
 
 merged_df <- do.call(cbind, glob_probs.slr)
-merged_df
+merged_df %>%
+  knitr::kable(format = "markdown") 
 
 ```
