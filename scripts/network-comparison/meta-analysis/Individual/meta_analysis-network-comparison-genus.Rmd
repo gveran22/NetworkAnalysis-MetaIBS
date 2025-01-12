@@ -1,5 +1,5 @@
 ---
-title: "Meta Analysis - Network Comparison (Family)"
+title: "Meta Analysis - Network Comparison (Genus)"
 output: 
   github_document:
     html_preview: false
@@ -7,7 +7,7 @@ date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="images/family/") 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="images/genus/") 
 ```
 
 ```{r library-instalation}
@@ -46,7 +46,7 @@ path.plots <- file.path(path.outputs , "plots")
 source("~/MetaIBS/scripts/functions.R")
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
-agg_level <- "Family"
+agg_level <- "Genus"
 ```
 
 
