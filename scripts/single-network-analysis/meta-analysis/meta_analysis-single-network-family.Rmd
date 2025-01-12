@@ -31,6 +31,7 @@ library(SpiecEasi)
 library(igraph)
 library(VennDiagram)
 library(NetCoMi)
+library(kableExtra)
 ```
 
 ```{r path-directories, echo=FALSE}
@@ -153,7 +154,9 @@ glob_probs.gl <- lapply(properties.gl, function(data) {
 merged_df <- do.call(cbind, glob_probs.gl)
 
 colnames(merged_df) <- datasets_names
-merged_df
+
+merged_df %>%
+  knitr::kable(format = "markdown", caption = "Global network properties") 
 
 ```
 
@@ -249,7 +252,9 @@ glob_probs.mb <- lapply(properties.mb, function(data) {
 merged_df <- do.call(cbind, glob_probs.mb)
 
 colnames(merged_df) <- datasets_names
-merged_df
+
+merged_df %>%
+  knitr::kable(format = "markdown", caption = "Global network properties") 
 
 ```
 
@@ -345,6 +350,8 @@ glob_probs.slr <- lapply(properties.slr, function(data) {
 merged_df <- do.call(cbind, glob_probs.slr)
 
 colnames(merged_df) <- datasets_names
-merged_df
+
+merged_df %>%
+  knitr::kable(format = "markdown", caption = "Global network properties") 
 
 ```
