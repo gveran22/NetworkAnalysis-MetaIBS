@@ -7,7 +7,7 @@ date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="~../../../../outputs/network-comparison/Individual/plots/Genus/")
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../../../outputs/network-comparison/Individual/plots/Genus/")
 ```
 
 ```{r library-instalation}
@@ -41,7 +41,7 @@ path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.phylobj_sep <- file.path(path.outputs , "phyloseq_IBS")
-path.plots <- file.path(path.outputs , "plots")
+path.properties <- file.path(path.outputs , "network_properties")
 
 source("~/MetaIBS/scripts/functions.R")
 datasets        <- list.files(path.datasets, pattern=".rds")
@@ -55,6 +55,8 @@ agg_level <- "Genus"
 ******************
 
 ## GLasso
+
+### Meta-Analysis Plot
 
 ```{r meta-analysis-glasso, fig.width=30, fig.height=13, echo=FALSE}
 
@@ -94,6 +96,7 @@ result <- plot(props_asso_meta.gl,
 
 ```
 
+### Individual Plots
 
 ```{r single-network-glasso, fig.width=30, fig.height=16, echo=FALSE}
 layout <- result$layout$layout1
@@ -160,7 +163,38 @@ for (i in seq_along(matrices_H.gl)) {
 
 ```
 
+### Global Properties
+
+```{r global-prop-gl, echo=FALSE}
+
+properties.gl <- lapply(datasets_names, function(x) {
+  tryCatch({
+      load(file=file.path(path.properties, agg_level, paste0("NetProp_",x,".RData")))
+      objects <- ls()
+      return(get(objects[1]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+
+  })
+
+names(properties.gl) <- datasets_names
+properties.gl <- Filter(Negate(is.null), properties.gl)
+
+glob_probs <- lapply(properties.gl, function(data) {
+    data <- data$globalPropsLCC
+    data
+  })
+
+merged_df <- do.call(cbind, glob_probs)
+merged_df
+
+```
+
 ## MB
+
+### Meta-Analysis Plot
 
 ```{r meta-analysis-mb, fig.width=30, fig.height=14, echo=FALSE}
 
@@ -199,6 +233,8 @@ result.mb <- plot(props_asso_meta.mb,
        hubBorderCol  = "gray40")
 
 ```
+
+### Individual Plots
 
 ```{r single-network-mb, fig.width=30, fig.height=15, echo=FALSE}
 layout.mb <- result.mb$layout$layout1
@@ -259,8 +295,37 @@ for (i in seq_along(matrices_H.mb)) {
 
 ```
 
+### Global Properties
+
+```{r global-prop-mb, echo=FALSE}
+
+properties.mb <- lapply(datasets_names, function(x) {
+  tryCatch({
+      load(file=file.path(path.properties, agg_level, paste0("NetProp_",x,".RData")))
+      objects <- ls()
+      return(get(objects[2]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+  })
+
+names(properties.mb) <- datasets_names
+properties.mb <- Filter(Negate(is.null), properties.mb)
+
+glob_probs.mb <- lapply(properties.mb, function(data) {
+    data <- data$globalPropsLCC
+    data
+  })
+
+merged_df <- do.call(cbind, glob_probs.mb)
+merged_df
+
+```
 
 ## SLR
+
+### Meta-Analysis Plot
 
 ```{r meta-analysis-slr, fig.width=30, fig.height=15, echo=FALSE}
 
@@ -301,6 +366,8 @@ result.slr <- plot(props_asso_meta.slr,
        cexTitle = 2,
        hubBorderCol  = "gray40")
 ```
+
+### Individual Plots
 
 ```{r single-network-slr, fig.width=30, fig.height=16, echo=FALSE}
 layout.slr <- result.slr$layout$layout1
@@ -357,5 +424,33 @@ for (i in seq_along(matrices_H.slr)) {
     message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
    }
 }
+
+```
+
+### Global Properties
+
+```{r global-prop-slr, echo=FALSE}
+
+properties.slr <- lapply(datasets_names, function(x) {
+  tryCatch({
+      load(file=file.path(path.properties, agg_level, paste0("NetProp_",x,".RData")))
+      objects <- ls()
+      return(get(objects[3]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+  })
+
+names(properties.slr) <- datasets_names
+properties.slr <- Filter(Negate(is.null), properties.slr)
+
+glob_probs.slr <- lapply(properties.slr, function(data) {
+    data <- data$globalPropsLCC
+    data
+  })
+
+merged_df <- do.call(cbind, glob_probs.slr)
+merged_df
 
 ```

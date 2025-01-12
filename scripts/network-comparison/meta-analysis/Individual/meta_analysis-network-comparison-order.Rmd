@@ -40,7 +40,7 @@ path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree"
 path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
-path.plots <- file.path(path.outputs , "plots")
+path.properties <- file.path(path.outputs , "network_properties")
 
 source("~/MetaIBS/scripts/functions.R")
 datasets        <- list.files(path.datasets, pattern=".rds")
@@ -155,6 +155,35 @@ for (i in seq_along(matrices_H.gl)) {
 
 ```
 
+### Global Properties
+
+```{r global-prop-gl, echo=FALSE}
+
+properties.gl <- lapply(datasets_names, function(x) {
+  tryCatch({
+      load(file=file.path(path.properties, agg_level, paste0("NetProp_",x,".RData")))
+      objects <- ls()
+      return(get(objects[1]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+
+  })
+
+names(properties.gl) <- datasets_names
+properties.gl <- Filter(Negate(is.null), properties.gl)
+
+glob_probs <- lapply(properties.gl, function(data) {
+    data <- data$globalPropsLCC
+    data
+  })
+
+merged_df <- do.call(cbind, glob_probs)
+merged_df
+
+```
+
 ## MB
 
 ### Meta-Analysis Plot
@@ -255,6 +284,33 @@ for (i in seq_along(matrices_H.mb)) {
 
 ```
 
+### Global Properties
+
+```{r global-prop-mb, echo=FALSE}
+
+properties.mb <- lapply(datasets_names, function(x) {
+  tryCatch({
+      load(file=file.path(path.properties, agg_level, paste0("NetProp_",x,".RData")))
+      objects <- ls()
+      return(get(objects[2]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+  })
+
+names(properties.mb) <- datasets_names
+properties.mb <- Filter(Negate(is.null), properties.mb)
+
+glob_probs.mb <- lapply(properties.mb, function(data) {
+    data <- data$globalPropsLCC
+    data
+  })
+
+merged_df <- do.call(cbind, glob_probs.mb)
+merged_df
+
+```
 
 ## SLR
 
@@ -354,5 +410,33 @@ for (i in seq_along(matrices_H.slr)) {
     message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
    }
 }
+
+```
+
+### Global Properties
+
+```{r global-prop-slr, echo=FALSE}
+
+properties.slr <- lapply(datasets_names, function(x) {
+  tryCatch({
+      load(file=file.path(path.properties, agg_level, paste0("NetProp_",x,".RData")))
+      objects <- ls()
+      return(get(objects[3]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+  })
+
+names(properties.slr) <- datasets_names
+properties.slr <- Filter(Negate(is.null), properties.slr)
+
+glob_probs.slr <- lapply(properties.slr, function(data) {
+    data <- data$globalPropsLCC
+    data
+  })
+
+merged_df <- do.call(cbind, glob_probs.slr)
+merged_df
 
 ```
