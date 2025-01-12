@@ -1,5 +1,5 @@
 ---
-title: "Meta analysis - Single Network Anaylsis (Order)"
+title: "Meta analysis - Single Network Anaylsis"
 output: 
   github_document:
     html_preview: false
@@ -7,7 +7,7 @@ date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="~/MetaIBS/outputs/single-network-analysis/Individual/plots/Order/") 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="~/MetaIBS/outputs/single-network-analysis/Individual/plots/Genus/") 
 ```
 
 ```{r library-instalation}
@@ -40,12 +40,11 @@ path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree"
 path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
-path.plots <- file.path(path.outputs , "plots")
 
 source("~/MetaIBS/scripts/functions.R")
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
-agg_level <- "Order"
+agg_level <- "Genus"
 ```
 
 
@@ -69,7 +68,7 @@ props_asso_meta.gl <- network_construct(meta.gl, thresh=0.1)
 # png(file.path(path.plots, agg_level, paste0("Meta-Analysis.png")),
 #       width=1800, height=1400)
 result <- plot(props_asso_meta.gl,
-       repulsion = 0.5100002,
+       repulsion = 0.4900003,
        nodeColor = "cluster",
        labelScale = FALSE,
        rmSingles = TRUE,
@@ -149,7 +148,7 @@ props_asso_meta.mb <- network_construct(meta.mb, thresh=0.1)
 #       width=1800, height=1400)
 
 result.mb <- plot(props_asso_meta.mb,
-     repulsion = 0.500103,
+     repulsion = 0.500001,
        #layout = layout,
        nodeColor = "cluster",
        labelScale = FALSE,
@@ -221,7 +220,7 @@ props_asso_meta.slr <- network_construct(meta.slr, thresh=0)
 #       width=1800, height=1400)
 
 result.slr <- plot(props_asso_meta.slr,
-     repulsion = 0.490004,
+     #repulsion = 0.6012,
       layout = layout,
        nodeColor = "cluster",
        labelScale = FALSE,
