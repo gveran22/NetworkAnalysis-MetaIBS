@@ -61,16 +61,37 @@ agg_level <- "Genus"
 ```{r meta-analysis-glasso, fig.width=30, fig.height=13, echo=FALSE}
 
 matrices_H.gl <- lapply(datasets_names, function(x) {
-  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
-  objects <- ls()
-  return(get(objects[1]))
+  tryCatch({
+    # Attempt to load the file
+    load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+    objects <- ls()  # Get the loaded objects
+    return(get(objects[1]))  # Return the first object
+  }, error = function(e) {
+    # Handle errors (e.g., empty files) by skipping them
+    message(paste("Skipping file:", x, "due to error:", e$message))
+    return(NULL)  # Return NULL for skipped files
   })
+})
+
+# Filter out the NULL entries from the result
+matrices_H.gl <- Filter(Negate(is.null), matrices_H.gl)
 
 matrices_IBS.gl <- lapply(datasets_names, function(x) {
-  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
-  objects <- ls()
-  return(get(objects[4]))
+  tryCatch({
+    # Attempt to load the file
+    load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+    objects <- ls()  # Get the loaded objects
+    return(get(objects[4]))  # Return the first object
+  }, error = function(e) {
+    # Handle errors (e.g., empty files) by skipping them
+    message(paste("Skipping file:", x, "due to error:", e$message))
+    return(NULL)  # Return NULL for skipped files
   })
+})
+
+# Filter out the NULL entries from the result
+matrices_IBS.gl <- Filter(Negate(is.null), matrices_IBS.gl)
+
 
 meta_H.gl <- meta_analysis(matrices_H.gl, "mean")
 meta_IBS.gl <- meta_analysis(matrices_IBS.gl, "mean")
@@ -200,16 +221,34 @@ merged_df %>%
 ```{r meta-analysis-mb, fig.width=30, fig.height=14, echo=FALSE}
 
 matrices_H.mb <- lapply(datasets_names, function(x) {
-  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
-  objects <- ls()
-  return(get(objects[2]))
+  tryCatch({
+    # Attempt to load the file
+    load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+    objects <- ls()  # Get the loaded objects
+    return(get(objects[2]))  # Return the first object
+  }, error = function(e) {
+    # Handle errors (e.g., empty files) by skipping them
+    message(paste("Skipping file:", x, "due to error:", e$message))
+    return(NULL)  # Return NULL for skipped files
   })
+})
+# Filter out the NULL entries from the result
+matrices_H.mb <- Filter(Negate(is.null), matrices_H.mb)
 
 matrices_IBS.mb <- lapply(datasets_names, function(x) {
-  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
-  objects <- ls()
-  return(get(objects[5]))
+  tryCatch({
+    # Attempt to load the file
+    load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+    objects <- ls()  # Get the loaded objects
+    return(get(objects[5]))  # Return the first object
+  }, error = function(e) {
+    # Handle errors (e.g., empty files) by skipping them
+    message(paste("Skipping file:", x, "due to error:", e$message))
+    return(NULL)  # Return NULL for skipped files
   })
+})
+# Filter out the NULL entries from the result
+matrices_IBS.mb <- Filter(Negate(is.null), matrices_IBS.mb)
 
 meta_H.mb <- meta_analysis(matrices_H.mb, "mean")
 meta_IBS.mb <- meta_analysis(matrices_IBS.mb, "mean")
@@ -332,16 +371,35 @@ merged_df %>%
 ```{r meta-analysis-slr, fig.width=30, fig.height=15, echo=FALSE}
 
 matrices_H.slr <- lapply(datasets_names, function(x) {
-  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
-  objects <- ls()
-  return(get(objects[3]))
+  tryCatch({
+    # Attempt to load the file
+    load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+    objects <- ls()  # Get the loaded objects
+    return(get(objects[3]))  # Return the first object
+  }, error = function(e) {
+    # Handle errors (e.g., empty files) by skipping them
+    message(paste("Skipping file:", x, "due to error:", e$message))
+    return(NULL)  # Return NULL for skipped files
   })
+})
+# Filter out the NULL entries from the result
+matrices_H.slr <- Filter(Negate(is.null), matrices_H.slr)
 
 matrices_IBS.slr <- lapply(datasets_names, function(x) {
-  load(file=file.path(path.assoc_mat, agg_level, paste0("AssocMat_",x,".RData")))
-  objects <- ls()
-  return(get(objects[6]))
+  tryCatch({
+    # Attempt to load the file
+    load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+    objects <- ls()  # Get the loaded objects
+    return(get(objects[6]))  # Return the first object
+  }, error = function(e) {
+    # Handle errors (e.g., empty files) by skipping them
+    message(paste("Skipping file:", x, "due to error:", e$message))
+    return(NULL)  # Return NULL for skipped files
   })
+})
+
+# Filter out the NULL entries from the result
+matrices_IBS.slr <- Filter(Negate(is.null), matrices_IBS.slr)
 
 meta_H.slr <- meta_analysis(matrices_H.slr, "mean")
 meta_IBS.slr <- meta_analysis(matrices_IBS.slr, "mean")
