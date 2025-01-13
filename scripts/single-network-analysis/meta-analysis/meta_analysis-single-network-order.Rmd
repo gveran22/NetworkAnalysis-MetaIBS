@@ -128,8 +128,6 @@ for (i in seq_along(matrices.gl)) {
          legend = c(paste0("# of taxas", dm[2]),paste0("# of samples", dm[1])), 
          bty = "n", horiz = TRUE)
 }
-
-
 ```
 ### Global Properties
 
@@ -145,7 +143,7 @@ names(properties.gl) <- datasets_names
 
 glob_probs.gl <- lapply(properties.gl, function(data) {
     #data <- readRDS(file)
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data <- data[seq(1, length(data), by=2)]
     data
   })
@@ -244,7 +242,7 @@ properties.mb <- lapply(datasets_names, function(x) {
 names(properties.mb) <- datasets_names
 
 glob_probs.mb <- lapply(properties.mb, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data <- data[seq(1, length(data), by=2)]
     data
   })
@@ -277,7 +275,7 @@ props_asso_meta.slr <- network_construct(meta.slr, thresh=0)
 
 result.slr <- plot(props_asso_meta.slr,
      repulsion = 0.490004,
-      layout = layout,
+      #layout = layout,
        nodeColor = "cluster",
        labelScale = FALSE,
        rmSingles = TRUE,
@@ -343,7 +341,7 @@ properties.slr <- lapply(datasets_names, function(x) {
 names(properties.slr) <- datasets_names
 
 glob_probs.slr <- lapply(properties.slr, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data <- data[seq(1, length(data), by=2)]
     data
   })

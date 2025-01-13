@@ -175,7 +175,7 @@ names(properties.gl) <- datasets_names
 properties.gl <- Filter(Negate(is.null), properties.gl)
 
 glob_probs <- lapply(properties.gl, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data
   })
 
@@ -304,7 +304,7 @@ names(properties.mb) <- datasets_names
 properties.mb <- Filter(Negate(is.null), properties.mb)
 
 glob_probs.mb <- lapply(properties.mb, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data
   })
 
@@ -336,11 +336,12 @@ meta_IBS.slr <- meta_analysis(matrices_IBS.slr, "mean")
 
 props_asso_meta.slr <- network_construct_comparison(meta_H.slr, meta_IBS.slr)
 
-props.slr <- props_asso_meta.slr$lccNames1 
-layout.slr <- layout[rownames(layout) %in% props.slr,]
+#props.slr <- props_asso_meta.slr$lccNames1 
+#layout.slr <- layout[rownames(layout) %in% props.slr,]
 
-result <- plot(props_asso_meta.slr,
-       layout = layout.slr,
+result.slr <- plot(props_asso_meta.slr,
+               repulsion = 0.6000,
+       #layout = layout.slr,
        sameLayout = TRUE,
        nodeColor = "cluster",
        labelScale = FALSE,
@@ -350,7 +351,7 @@ result <- plot(props_asso_meta.slr,
        cexLabels = 1.5,
        cexHubLabels = 1.7,
        title1 = "Meta-Analysis",
-       groupNames = c("Healthy - MetaAnalysis", "IBS - MetaAnalysis"),
+       groupNames = c("Healthy", "IBS"),
        showTitle = TRUE,
        cexTitle = 2,
        hubBorderCol  = "gray40")
@@ -359,6 +360,7 @@ result <- plot(props_asso_meta.slr,
 ### Individual Plots
 
 ```{r single-network-slr, fig.width=30, fig.height=16, echo=FALSE}
+layout.slr <- result.slr$layout$layout1
 
 for (i in seq_along(matrices_H.slr)) {
   # Create a copy of the meta matrix to modify
@@ -434,7 +436,7 @@ names(properties.slr) <- datasets_names
 properties.slr <- Filter(Negate(is.null), properties.slr)
 
 glob_probs.slr <- lapply(properties.slr, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data
   })
 

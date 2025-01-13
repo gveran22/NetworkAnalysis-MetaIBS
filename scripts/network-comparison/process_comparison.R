@@ -48,7 +48,6 @@ run_analysis <- function(agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar, 
       # Handle the empty network error
       warning(paste("Skipping dataset", datasets_names[i], "due to empty network."))
     })
-    #get_network_properties(datasets_names[i], agg_level)
   }
 }
 
@@ -78,10 +77,10 @@ for (config in analysis_configs) {
 
 # Combined analysis paths
 combined_paths <- list(
-  "all" = "all",
-  "variable_region" = "variable_region",
-  "sample_type" = "sample_type",
-  "sequencing_tech" = "sequencing_tech"
+  #"all" = "all",
+  "variable_region" = "variable_region"#,
+  #"sample_type" = "sample_type",
+  #"sequencing_tech" = "sequencing_tech"
 )
 
 # Run combined analysis for each variable and configuration

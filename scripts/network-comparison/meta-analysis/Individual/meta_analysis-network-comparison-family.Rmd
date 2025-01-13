@@ -184,7 +184,7 @@ names(properties.gl) <- datasets_names
 properties.gl <- Filter(Negate(is.null), properties.gl)
 
 glob_probs <- lapply(properties.gl, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data
   })
 
@@ -316,7 +316,7 @@ names(properties.mb) <- datasets_names
 properties.mb <- Filter(Negate(is.null), properties.mb)
 
 glob_probs.mb <- lapply(properties.mb, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data
   })
 
@@ -449,7 +449,7 @@ names(properties.slr) <- datasets_names
 properties.slr <- Filter(Negate(is.null), properties.slr)
 
 glob_probs.slr <- lapply(properties.slr, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data
   })
 

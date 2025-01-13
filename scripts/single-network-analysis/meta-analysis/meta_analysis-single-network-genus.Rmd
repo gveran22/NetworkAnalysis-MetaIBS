@@ -145,7 +145,7 @@ names(properties.gl) <- datasets_names
 
 glob_probs.gl <- lapply(properties.gl, function(data) {
     #data <- readRDS(file)
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data <- data[seq(1, length(data), by=2)]
     data
   })
@@ -243,7 +243,7 @@ properties.mb <- lapply(datasets_names, function(x) {
 names(properties.mb) <- datasets_names
 
 glob_probs.mb <- lapply(properties.mb, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data <- data[seq(1, length(data), by=2)]
     data
   })
@@ -275,8 +275,8 @@ props_asso_meta.slr <- network_construct(meta.slr, thresh=0)
 #       width=1800, height=1400)
 
 result.slr <- plot(props_asso_meta.slr,
-     #repulsion = 0.6012,
-      layout = layout,
+     repulsion = 0.6012,
+      #layout = layout,
        nodeColor = "cluster",
        labelScale = FALSE,
        rmSingles = TRUE,
@@ -343,7 +343,7 @@ properties.slr <- lapply(datasets_names, function(x) {
 names(properties.slr) <- datasets_names
 
 glob_probs.slr <- lapply(properties.slr, function(data) {
-    data <- data$globalPropsLCC
+    data <- data$glob_probs_lcc
     data <- data[seq(1, length(data), by=2)]
     data
   })
