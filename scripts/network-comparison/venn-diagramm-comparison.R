@@ -32,7 +32,7 @@ datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
 
 
-agg_level <- "Genus"
+agg_level <- c("Order", "Family","Genus")
 
 for (i in 1:length(datasets_names)) {
   
