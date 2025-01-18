@@ -29,9 +29,132 @@ library(NetCoMi)
 
 ------------------------------------------------------------------------
 
-# 2. META-ANALYSIS
+# 2. FUNCTIONS
 
 ------------------------------------------------------------------------
+
+``` r
+# Function to load matrices and filter NULL entries
+load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_index) {
+  matrices <- lapply(datasets_names, function(x) {
+    tryCatch({
+      load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+      objects <- ls()  # Get loaded objects
+      return(get(objects[object_index]))  # Return the specified object
+    }, error = function(e) {
+      message(paste("Skipping file:", x, "due to error:", e$message))
+      return(NULL)
+    })
+  })
+  Filter(Negate(is.null), matrices)  # Remove NULL entries
+}
+
+# Function to plot meta-analysis
+plot_meta_analysis <- function(meta, layout = NULL, title = "Meta-Analysis", repulsion = 0.5) {
+  props_asso_meta <- network_construct(meta, thresh = 0.1)
+  plot(props_asso_meta,
+       layout = layout,
+       repulsion = repulsion,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 0.7,
+       cexHubLabels = 1,
+       title1 = title,
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol = "gray40")
+}
+
+# Function to process individual plots
+plot_individual_networks <- function(matrices, meta, layout, datasets_names) {
+  for (i in seq_along(matrices)) {
+    sub_adj <- matrices[[i]]
+    
+    # Skip if no connected nodes
+    if (sum(sub_adj)== 0) {
+      message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+      next
+    }
+    
+    common_rows <- intersect(rownames(meta), rownames(sub_adj))
+    common_cols <- intersect(colnames(meta), colnames(sub_adj))
+
+    filtered_meta_adj <- meta
+    filtered_meta_adj[,] <- 0
+    
+    filtered_meta_adj[common_rows, common_cols] <- meta[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+    
+    props_asso <- network_construct(filtered_meta_adj)
+    plot(props_asso,
+         layout = layout,
+         nodeColor = "cluster",
+         labelScale = FALSE,
+         rmSingles = "none",#TRUE,
+         nodeSize = "eigenvector",
+         cexNodes = 0.58,
+         cexLabels = 1.5,
+         cexHubLabels = 1.7,
+         title1 = paste0("Network Analysis ", str_to_title(datasets_names)),
+         showTitle = TRUE,
+         cexTitle = 2,
+         hubBorderCol  = "gray40")
+  }
+}
+
+# Function to process individual plots
+plot_individual_network <- function(matrix, meta, layout,  datasets_names, method) {
+
+  sub_adj <- matrix
+    
+    # Skip if no connected nodes
+  if (sum(sub_adj)== 0) {
+    message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+    next
+  }
+    
+  common_rows <- intersect(rownames(meta), rownames(sub_adj))
+  common_cols <- intersect(colnames(meta), colnames(sub_adj))
+
+  filtered_meta_adj <- meta
+  filtered_meta_adj[,] <- 0
+    
+  filtered_meta_adj[common_rows, common_cols] <- meta[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+    
+  props_asso <- network_construct(filtered_meta_adj)
+  plot(props_asso,
+         layout = layout,
+         nodeColor = "cluster",
+         labelScale = FALSE,
+         rmSingles = "none",#TRUE,
+         nodeSize = "eigenvector",
+         cexNodes = 0.58,
+         cexLabels = 0.7,
+         cexHubLabels = 1,
+         title1 = paste0("Network Analysis ",  str_to_title(datasets_names)," ",method),
+         showTitle = TRUE,
+         cexTitle = 1.5,
+         hubBorderCol  = "gray40")
+  
+}
+```
+
+------------------------------------------------------------------------
+
+# 3. META-ANALYSIS
+
+------------------------------------------------------------------------
+
+## Meta-Analysis Plot
+
+<img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-1.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-2.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-3.png" width="33%" />
+
+<img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-1.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-2.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-3.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-4.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-5.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-6.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-7.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-8.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-9.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-10.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-11.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-12.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-13.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-14.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-15.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-16.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-17.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-18.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-19.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-20.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-21.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-22.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-23.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-24.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-25.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-26.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-27.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-28.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-29.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-30.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-31.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-32.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-33.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-34.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-35.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/single-network-36.png" width="33%" />
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\* \# 2. META-ANALYSIS
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 
 ## GLasso
 

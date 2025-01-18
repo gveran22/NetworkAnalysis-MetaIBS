@@ -53,7 +53,7 @@ agg_level <- "Family"
 # 2. FUNCTIONS
 **************
 
-```{r function, eval=FALSE}
+```{r function, eval=TRUE}
 # Function to load matrices and filter NULL entries
 load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_index) {
   matrices <- lapply(datasets_names, function(x) {
