@@ -49,7 +49,157 @@ datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
 agg_level <- "Family"
 ```
 
+**************
+# 2. FUNCTIONS
+**************
 
+```{r function, eval=FALSE}
+# Function to load matrices and filter NULL entries
+load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_index) {
+  matrices <- lapply(datasets_names, function(x) {
+    tryCatch({
+      load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+      objects <- ls()  # Get loaded objects
+      return(get(objects[object_index]))  # Return the specified object
+    }, error = function(e) {
+      message(paste("Skipping file:", x, "due to error:", e$message))
+      return(NULL)
+    })
+  })
+  Filter(Negate(is.null), matrices)  # Remove NULL entries
+}
+
+# Function to plot meta-analysis
+plot_meta_analysis <- function(meta, layout = NULL, title = "Meta-Analysis", repulsion = 0.5) {
+  props_asso_meta <- network_construct(meta, thresh = 0.1)
+  plot(props_asso_meta,
+       layout = layout,
+       repulsion = repulsion,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 0.7,
+       cexHubLabels = 1,
+       title1 = title,
+       showTitle = TRUE,
+       cexTitle = 2,
+       hubBorderCol = "gray40")
+}
+
+# Function to process individual plots
+plot_individual_networks <- function(matrices, meta, layout, datasets_names) {
+  for (i in seq_along(matrices)) {
+    sub_adj <- matrices[[i]]
+    
+    # Skip if no connected nodes
+    if (sum(sub_adj)== 0) {
+      message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+      next
+    }
+    
+    common_rows <- intersect(rownames(meta), rownames(sub_adj))
+    common_cols <- intersect(colnames(meta), colnames(sub_adj))
+
+    filtered_meta_adj <- meta
+    filtered_meta_adj[,] <- 0
+    
+    filtered_meta_adj[common_rows, common_cols] <- meta[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+    
+    props_asso <- network_construct(filtered_meta_adj)
+    plot(props_asso,
+         layout = layout,
+         nodeColor = "cluster",
+         labelScale = FALSE,
+         rmSingles = "none",#TRUE,
+         nodeSize = "eigenvector",
+         cexNodes = 0.58,
+         cexLabels = 1.5,
+         cexHubLabels = 1.7,
+         title1 = paste0("Network Analysis ", str_to_title(datasets_names)),
+         showTitle = TRUE,
+         cexTitle = 2,
+         hubBorderCol  = "gray40")
+  }
+}
+
+# Function to process individual plots
+plot_individual_network <- function(matrix, meta, layout,  datasets_names, method) {
+
+  sub_adj <- matrix
+    
+    # Skip if no connected nodes
+  if (sum(sub_adj)== 0) {
+    message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+    next
+  }
+    
+  common_rows <- intersect(rownames(meta), rownames(sub_adj))
+  common_cols <- intersect(colnames(meta), colnames(sub_adj))
+
+  filtered_meta_adj <- meta
+  filtered_meta_adj[,] <- 0
+    
+  filtered_meta_adj[common_rows, common_cols] <- meta[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+    
+  props_asso <- network_construct(filtered_meta_adj)
+  plot(props_asso,
+         layout = layout,
+         nodeColor = "cluster",
+         labelScale = FALSE,
+         rmSingles = "none",#TRUE,
+         nodeSize = "eigenvector",
+         cexNodes = 0.58,
+         cexLabels = 0.7,
+         cexHubLabels = 1,
+         title1 = paste0("Network Analysis ",  str_to_title(datasets_names)," ",method),
+         showTitle = TRUE,
+         cexTitle = 1.5,
+         hubBorderCol  = "gray40")
+  
+}
+```
+
+******************
+# 3. META-ANALYSIS
+******************
+
+## Meta-Analysis Plot
+
+```{r meta-analysis, out.width="33%", fig.show="hold", fig.align="default", echo=FALSE}
+
+matrices.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
+meta.gl <- meta_analysis(matrices.gl, "mean")
+result.gl <- plot_meta_analysis(meta.gl, title = "Meta-Analysis GLasso", repulsion = 0.4900003)
+
+matrices.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
+meta.mb <- meta_analysis(matrices.mb, "mean")
+result.mb <- plot_meta_analysis(meta.mb, title = "Meta-Analysis MB", repulsion = 0.500001)
+
+matrices.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
+meta.slr <- meta_analysis(matrices.slr, "mean")
+result.slr <- plot_meta_analysis(meta.slr, title = "Meta-Analysis SLR", repulsion = 0.6012)
+
+```
+
+
+```{r single-network, out.width="33%", fig.show="hold", fig.align="default", echo=FALSE}
+layout.gl <- result.gl$layout$layout1
+layout.mb <- result.mb$layout$layout1
+layout.slr <- result.slr$layout$layout1
+
+for (i in seq(matrices.gl)){
+  mat.gl <- matrices.gl[[i]]
+  mat.mb <- matrices.mb[[i]]
+  mat.slr <- matrices.slr[[i]]
+  
+  plot_individual_network(mat.gl, meta.gl, layout.gl, datasets_names[[i]], "GLasso")
+  plot_individual_network(mat.mb, meta.mb, layout.mb, datasets_names[[i]], "MB")
+  plot_individual_network(mat.slr, meta.slr, layout.slr, datasets_names[[i]], "SLR")
+}
+```
 ******************
 # 2. META-ANALYSIS
 ******************
@@ -94,8 +244,7 @@ result <- plot(props_asso_meta.gl,
 layout <- result$layout$layout1
 
 for (i in seq_along(matrices.gl)) {
-  physeq <- readRDS(file=file.path(path.phylobj, agg_level, paste0("agglo_",datasets_names[i],".rds")))
-  dm <- dim(physeq@otu_table)
+
   # Create a copy of the meta matrix to modify
   filtered_meta_adj <- meta.gl
   
@@ -125,10 +274,6 @@ for (i in seq_along(matrices.gl)) {
              showTitle = TRUE,
              cexTitle = 2,
              hubBorderCol  = "gray40")
-  
-  legend("bottomright", title = "Dimensions", 
-         legend = c(paste0("# of taxas", dm[2]),paste0("# of samples", dm[1])), 
-         bty = "n", horiz = TRUE)
 }
 
 
@@ -153,7 +298,7 @@ glob_probs.gl <- lapply(properties.gl, function(data) {
   })
 
 merged_df <- do.call(cbind, glob_probs.gl)
-
+colnames(merged_df) <- names(glob_probs.gl)
 merged_df %>%
   knitr::kable(format = "markdown") 
 
@@ -251,7 +396,7 @@ glob_probs.mb <- lapply(properties.mb, function(data) {
   })
 
 merged_df <- do.call(cbind, glob_probs.mb)
-
+colnames(merged_df) <- names(glob_probs.gl)
 merged_df %>%
   knitr::kable(format = "markdown") 
 
@@ -349,7 +494,7 @@ glob_probs.slr <- lapply(properties.slr, function(data) {
   })
 
 merged_df <- do.call(cbind, glob_probs.slr)
-
+colnames(merged_df) <- names(glob_probs.gl)
 merged_df %>%
   knitr::kable(format = "markdown") 
 
