@@ -15,6 +15,13 @@ get_network_properties <- function(physeq_name, agg_level){
   props_asso.mb <- summary(network_construct_comparison(assoMat_H.mb, assoMat_IBS.mb))
   props_asso.slr <- summary(network_construct_comparison(assoMat_H.slr, assoMat_IBS.slr))
   
+  props_asso.gl$group1 <- "Healthy"
+  props_asso.gl$group2 <- "IBS"
+  props_asso.mb$group1 <- "Healthy"
+  props_asso.mb$group2 <- "IBS"
+  props_asso.slr$group1 <- "Healthy"
+  props_asso.slr$group2 <- "IBS"
+  
   if (!dir.exists(file.path(path.properties, agg_level))) {
     dir.create(file.path(path.properties, agg_level), recursive = TRUE)
   }

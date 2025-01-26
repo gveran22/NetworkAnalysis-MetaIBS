@@ -28,11 +28,11 @@ rank.slr <- function(otu){
   return(ranks)
 }
 
-network_construct <- function(assoMat, thresh=0){
+network_construct <- function(assoMat, dataType = "condDependence", thresh=0){
   
   # Network construction and analysis
   net_asso_p <- netConstruct(data = assoMat,
-                             dataType = "condDependence",
+                             dataType = dataType,
                              sparsMethod = "threshold",
                              thresh = thresh,
                              normMethod = "none", 
@@ -52,12 +52,12 @@ network_construct <- function(assoMat, thresh=0){
 }
 
 
-network_construct_comparison <- function(assoMat1,assoMat2, thresh = 0){
+network_construct_comparison <- function(assoMat1,assoMat2, dataType = "condDependence", thresh = 0){
   
   # Network construction and analysis
   net_asso_p <- netConstruct(data = assoMat1,
                              data2 = assoMat2,
-                             dataType = "condDependence",
+                             dataType = dataType,
                              sparsMethod = "threshold",
                              thresh = thresh,
                              normMethod = "none", 
@@ -185,48 +185,159 @@ get_venn_diagram <- function(matrix1, matrix2, matrix3, physeq_name){
   
 }
 
-meta_analysis <- function(association_matrices, aggregation_method){
+########################### Functions for meta-analysis ########################################
+
+# Function to load matrices and filter NULL entries
+load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_index) {
+  matrices <- lapply(datasets_names, function(x) {
+    tryCatch({
+      load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+      objects <- ls()  # Get loaded objects
+      return(get(objects[object_index]))  # Return the specified object
+    }, error = function(e) {
+      message(paste("Skipping file:", x, "due to error:", e$message))
+      return(NULL)
+    })
+  })
+  Filter(Negate(is.null), matrices)  # Remove NULL entries
+}
+
+# Function to plot meta-analysis
+plot_network <- function(meta, layout = NULL, title = "Meta-Analysis", dataType = "condDependence", 
+                         thresh = 0, repulsion=0.7) {
+  props_asso_meta <- network_construct(meta, dataType = dataType , thresh = thresh)
+  plot(props_asso_meta,
+       layout = layout,
+       repulsion = repulsion,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 0.7,
+       cexHubLabels = 1,
+       title1 = title,
+       showTitle = TRUE,
+       cexTitle = 1.5,
+       hubBorderCol = "gray40")
+}
+
+# Function to plot meta-analysis comparison
+plot_network_comparison <- function(meta_H, meta_IBS, layout = NULL, groupNames = c("Healthy", "IBS"), 
+                                    dataType = "condDependence", thresh = 0, repulsion =0.7) {
+  props_asso_meta <- network_construct_comparison(meta_H, meta_IBS, dataType = dataType , thresh = thresh)
+  plot(props_asso_meta,
+       layout = layout,
+       repulsion = repulsion,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 0.7,
+       cexHubLabels = 1,
+       #title1 = title,
+       groupNames = groupNames,
+       showTitle = TRUE,
+       cexTitle = 1.3,
+       hubBorderCol = "gray40")
+}
+
+
+# Function to process individual plots
+plot_individual_network <- function(matrix, meta, layout,  datasets_names, method) {
   
-  # Union of all nodes (row/column names from matrices)
-  all_nodes <- unique(unlist(lapply(association_matrices, rownames)))
+  sub_adj <- matrix
   
-  # Create an empty adjacency matrix for the meta-network
-  meta_adj <- matrix(0, nrow = length(all_nodes), ncol = length(all_nodes))
-  rownames(meta_adj) <- colnames(meta_adj) <- all_nodes
-  
-  # Loop over all pairs of nodes to aggregate the edge weights
-  for (i in 1:length(all_nodes)) {
-    for (j in i:length(all_nodes)) {
-      # Collect edge weights for the node pair across all matrices
-      edge_weights <- unlist(lapply(association_matrices, function(matrix) {
-        if (all(c(all_nodes[i], all_nodes[j]) %in% rownames(matrix))) {
-          return(matrix[all_nodes[i], all_nodes[j]])
-        }
-        return(NA)
-      }))
-      
-      # Remove NA values
-      edge_weights <- edge_weights[!is.na(edge_weights)]
-      
-      # Aggregate edge weights based on the chosen method
-      if (length(edge_weights) > 0) {
-        if (aggregation_method == "min") {
-          meta_adj[i, j] <- min(edge_weights)
-          meta_adj[j, i] <- min(edge_weights)
-        } else if (aggregation_method == "max") {
-          meta_adj[i, j] <- max(edge_weights)
-          meta_adj[j, i] <- max(edge_weights)
-        } else if (aggregation_method == "mean") {
-          meta_adj[i, j] <- mean(edge_weights)
-          meta_adj[j, i] <- mean(edge_weights)
-        } else if (aggregation_method == "median") {
-          meta_adj[i, j] <- median(edge_weights)
-          meta_adj[j, i] <- median(edge_weights)
-        }
-      }
-    }
+  # Skip if no connected nodes
+  if (sum(sub_adj)== 0) {
+    message(paste0("Skipping network ", datasets_names[i], " due to no connected nodes."))
+    next
   }
-  return(meta_adj)
+  
+  common_rows <- intersect(rownames(meta), rownames(sub_adj))
+  common_cols <- intersect(colnames(meta), colnames(sub_adj))
+  
+  filtered_meta_adj <- meta
+  filtered_meta_adj[,] <- 0
+  
+  filtered_meta_adj[common_rows, common_cols] <- meta[common_rows, common_cols] * (sub_adj[common_rows, common_cols] != 0)
+  
+  props_asso <- network_construct(filtered_meta_adj)
+  plot(props_asso,
+       layout = layout,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = "none",#TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 0.7,
+       cexHubLabels = 1,
+       title1 = paste0("Network Analysis ",  str_to_title(datasets_names)," ",method),
+       showTitle = TRUE,
+       cexTitle = 1.5,
+       hubBorderCol  = "gray40")
+  
+}
+
+# Function to process individual plots
+plot_individual_networks <- function(matrices, meta, layout, datasets_names, method) {
+  for (i in seq_along(matrices)) {
+    plot_individual_network(matrices[[i]], meta, layout,  datasets_names[[i]], method)
+  }
+}
+
+# Function to process individual plots comparison
+plot_individual_network_comparison <- function(matrix_H, matrix_IBS, meta_H, meta_IBS, 
+                                                layout, datasets_names, method) {
+  sub_adj_H <- matrix_H
+  sub_adj_IBS <- matrix_IBS
+  
+  # Skip if no connected nodes
+  if (sum(sub_adj_H) == 0 && sum(sub_adj_IBS) == 0) {
+    message(paste0("Skipping network ", datasets_names, " due to no connected nodes."))
+    next
+  }
+  
+  common_rows_H <- intersect(rownames(meta_H), rownames(sub_adj_H))
+  common_cols_H <- intersect(colnames(meta_H), colnames(sub_adj_H))
+  common_rows_IBS <- intersect(rownames(meta_IBS), rownames(sub_adj_IBS))
+  common_cols_IBS <- intersect(colnames(meta_IBS), colnames(sub_adj_IBS))
+  
+  filtered_meta_adj_H <- meta_H
+  filtered_meta_adj_IBS <- meta_IBS
+  filtered_meta_adj_H[,] <- 0
+  filtered_meta_adj_IBS[,] <- 0
+  
+  filtered_meta_adj_H[common_rows_H, common_cols_H] <- meta_H[common_rows_H, common_cols_H] * (sub_adj_H[common_rows_H, common_cols_H] != 0)
+  filtered_meta_adj_IBS[common_rows_IBS, common_cols_IBS] <- meta_IBS[common_rows_IBS, common_cols_IBS] * (sub_adj_IBS[common_rows_IBS, common_cols_IBS] != 0)
+  
+  props_asso <- network_construct_comparison(filtered_meta_adj_H, filtered_meta_adj_IBS)
+  plot(props_asso,
+       layout = layout,
+       #sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       groupNames = c(paste0("Healthy - ", str_to_title(datasets_names)," ",method), 
+                      paste0("IBS - ", str_to_title(datasets_names)," ",method)),
+       cexTitle = 2,
+       hubBorderCol = "gray40")
+  
+}
+
+plot_individual_networks_comparison <- function(matrices_H, matrices_IBS, meta_H, meta_IBS, 
+                                                layout, datasets_names, method) {
+  for (i in seq_along(matrices_H)) {
+    plot_individual_network_comparison(matrices_H[[i]], matrices_IBS[[i]], meta_H, meta_IBS, 
+                                        layout, datasets_names[i], method)
+  }
 }
 
 read_assoc.matrices <- function(agg_level, method){
@@ -250,7 +361,7 @@ read_assoc.matrices <- function(agg_level, method){
 
 summary_assoc_matrix <- function(matrices, summary){
   
-  #### summary can be: "proportion", "sum" or "mean"
+  #### summary can be: "proportion", "sum", "mean", "min", "max", o "median"
   
   # Find the union of all row and column names
   all_rows <- unique(unlist(lapply(matrices, rownames)))
@@ -292,8 +403,86 @@ summary_assoc_matrix <- function(matrices, summary){
     }else if (summary=="mean"){
       # Calculate the mean matrix
       final_matrix <- sum_matrix / length(matrices)
+    }else if (summary %in% c("min", "max", "median")) {
+      # Convierte la lista de matrices en un array tridimensional
+      matrix_array <- simplify2array(full_matrices)
+      
+      # Calcula min, max o median usando apply
+      if (summary == "min") {
+        final_matrix <- apply(matrix_array, c(1, 2), min)
+      } else if (summary == "max") {
+        final_matrix <- apply(matrix_array, c(1, 2), max)
+      } else if (summary == "median") {
+        final_matrix <- apply(matrix_array, c(1, 2), median)
+      }
+    } else {
+      stop("El método de resumen no es válido. Usa 'proportion', 'sum', 
+           'mean', 'min', 'max', o 'median'.")
     }
   }
   
   return(final_matrix)
 }
+
+process_global_properties <- function(datasets_names, path.properties, 
+                                      agg_level, object_index) {
+  # Load properties
+  properties <- lapply(datasets_names, function(x) {
+    tryCatch({
+      load(file = file.path(path.properties, agg_level, paste0("NetProp_", x, ".RData")))
+      objects <- ls()
+      return(get(objects[object_index]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+    
+  })
+  
+  # Assign dataset names to the properties
+  names(properties) <- datasets_names
+  properties <- Filter(Negate(is.null), properties)
+  
+  # Extract and process global probabilities
+  glob_probs <- lapply(properties, function(data) {
+    data <- data$glob_probs_lcc
+    data
+  })
+  
+  # Combine into a single data frame
+  merged_df <- do.call(cbind, glob_probs)
+  colnames(merged_df) <- datasets_names
+  return(merged_df)
+}
+
+process_global_properties_comparison <- function(datasets_names, path.properties, 
+                                      agg_level, object_index) {
+  # Load properties
+  properties <- lapply(datasets_names, function(x) {
+    tryCatch({
+      load(file = file.path(path.properties, agg_level, paste0("NetProp_", x, ".RData")))
+      objects <- ls()
+      return(get(objects[object_index]))
+    }, error = function(e) {
+      # Handle the empty network error
+      NULL
+    })
+    
+  })
+  
+  # Assign dataset names to the properties
+  names(properties) <- datasets_names
+  properties <- Filter(Negate(is.null), properties)
+  
+  # Extract and process global probabilities
+  glob_probs <- lapply(properties, function(data) {
+    data <- data$glob_probs_lcc
+    colnames(data) <- c("Healthy", "IBS")
+    data
+  })
+  
+  # Combine into a single data frame
+  merged_df <- do.call(cbind, glob_probs)
+  return(merged_df)
+}
+

@@ -77,10 +77,10 @@ for (config in analysis_configs) {
 
 # Combined analysis paths
 combined_paths <- list(
-  #"all" = "all",
-  "variable_region" = "variable_region"#,
-  #"sample_type" = "sample_type",
-  #"sequencing_tech" = "sequencing_tech"
+  "all" = "all",
+  "variable_region" = "variable_region",
+  "sample_type" = "sample_type",
+  "sequencing_tech" = "sequencing_tech"
 )
 
 # Run combined analysis for each variable and configuration

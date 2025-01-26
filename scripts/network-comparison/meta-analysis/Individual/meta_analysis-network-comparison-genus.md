@@ -29,23 +29,29 @@ library(NetCoMi)
 
 ------------------------------------------------------------------------
 
-# 2. META-ANALYSIS
+# 2. FUNCTIONS
 
 ------------------------------------------------------------------------
 
-## GLasso
+------------------------------------------------------------------------
 
-### Meta-Analysis Plot
+# 3. META-ANALYSIS
 
-![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-1.png)<!-- -->
+------------------------------------------------------------------------
 
-### Individual Plots
+## 3.1. Summary Plots
 
-![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-7.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-8.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-9.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-10.png)<!-- -->
+![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-glasso-7.png)<!-- -->
 
-### Global Properties
+## 3.2. Individual Plots
 
-|  | agp.group ’’ | agp.group ’’ | fukui.group ’’ | fukui.group ’’ | hugerth.group ’’ | hugerth.group ’’ | labus.group ’’ | labus.group ’’ | liu.group ’’ | liu.group ’’ | lopresti.group ’’ | lopresti.group ’’ | mars.group ’’ | mars.group ’’ | nagel.group ’’ | nagel.group ’’ | zeber.group ’’ | zeber.group ’’ | zhuang.group ’’ | zhuang.group ’’ |
+![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-7.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-8.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-9.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-10.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-11.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-12.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-13.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-14.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-15.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-16.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-17.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-18.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-19.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-20.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-21.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-22.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-23.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-24.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-25.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-26.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-27.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-28.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-29.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-glasso-30.png)<!-- -->
+
+## 3.3. Global Properties
+
+### 3.3.1. GLasso
+
+|  | agp.Healthy | agp.IBS | fukui.Healthy | fukui.IBS | hugerth.Healthy | hugerth.IBS | labus.Healthy | labus.IBS | liu.Healthy | liu.IBS | lopresti.Healthy | lopresti.IBS | mars.Healthy | mars.IBS | nagel.Healthy | nagel.IBS | zeber.Healthy | zeber.IBS | zhuang.Healthy | zhuang.IBS |
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Relative LCC size | 0.71765 | 0.68235 | 0.64045 | 0.85393 | 0.68605 | 0.88372 | 0.15942 | 0.17391 | 0.82051 | 0.84615 | 0.10345 | 0.10345 | 0.77108 | 0.89157 | 0.49398 | 0.85542 | 0.33735 | 0.80723 | 0.18605 | 0.52326 |
 | Clustering coefficient | 0.60646 | 0.63326 | 0.20944 | 0.30342 | 0.60699 | 0.31580 | 0.77056 | 0.20303 | 0.29154 | 0.47454 | 0.91975 | 0.58336 | 0.47628 | 0.38910 | 0.44291 | 0.30303 | 0.44294 | 0.33728 | 0.60246 | 0.23162 |
@@ -58,19 +64,9 @@ library(NetCoMi)
 | Average dissimilarity\* | 0.68409 | 0.68502 | 0.70678 | 0.69461 | 0.68724 | 0.68775 | 0.65469 | 0.66325 | 0.69294 | 0.69161 | 0.65719 | 0.67156 | 0.68675 | 0.69055 | 0.70279 | 0.70269 | 0.69675 | 0.69354 | 0.69498 | 0.69764 |
 | Average path length\*\* | 1.86128 | 2.11528 | 2.68784 | 1.96936 | 1.68452 | 1.95398 | 1.13115 | 1.99971 | 2.53487 | 1.89222 | 0.85004 | 1.11418 | 2.50202 | 2.60074 | 3.08835 | 2.92561 | 2.06008 | 2.17572 | 1.93384 | 3.02594 |
 
-## MB
+### 3.3.2 MB
 
-### Meta-Analysis Plot
-
-![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-mb-1.png)<!-- -->
-
-### Individual Plots
-
-![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-7.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-8.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-9.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-mb-10.png)<!-- -->
-
-### Global Properties
-
-|  | agp.group ’’ | agp.group ’’ | fukui.group ’’ | fukui.group ’’ | hugerth.group ’’ | hugerth.group ’’ | labus.group ’’ | labus.group ’’ | liu.group ’’ | liu.group ’’ | lopresti.group ’’ | lopresti.group ’’ | mars.group ’’ | mars.group ’’ | nagel.group ’’ | nagel.group ’’ | zeber.group ’’ | zeber.group ’’ | zhuang.group ’’ | zhuang.group ’’ |
+|  | agp.Healthy | agp.IBS | fukui.Healthy | fukui.IBS | hugerth.Healthy | hugerth.IBS | labus.Healthy | labus.IBS | liu.Healthy | liu.IBS | lopresti.Healthy | lopresti.IBS | mars.Healthy | mars.IBS | nagel.Healthy | nagel.IBS | zeber.Healthy | zeber.IBS | zhuang.Healthy | zhuang.IBS |
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Relative LCC size | 0.85882 | 0.81176 | 0.86517 | 0.94382 | 0.76744 | 0.97674 | 0.84058 | 0.84058 | 0.98718 | 0.97436 | 0.27586 | 0.36207 | 1.00000 | 1.00000 | 0.97590 | 1.00000 | 0.97590 | 0.98795 | 1.00000 | 0.98837 |
 | Clustering coefficient | 0.39872 | 0.39109 | 0.09927 | 0.17080 | 0.44096 | 0.15734 | 0.08078 | 0.11687 | 0.15532 | 0.23728 | 0.00000 | 0.07038 | 0.13460 | 0.09689 | 0.09350 | 0.13744 | 0.07703 | 0.09757 | 0.26540 | 0.08000 |
@@ -83,19 +79,9 @@ library(NetCoMi)
 | Average dissimilarity\* | 0.68818 | 0.68923 | 0.70440 | 0.69544 | 0.68765 | 0.69324 | 0.67385 | 0.66645 | 0.69504 | 0.68897 | 0.65726 | 0.68056 | 0.68252 | 0.69365 | 0.70302 | 0.69443 | 0.68805 | 0.69424 | 0.69017 | 0.69532 |
 | Average path length\*\* | 2.18486 | 2.22008 | 3.18917 | 2.25862 | 2.21032 | 1.96763 | 4.91766 | 4.12657 | 2.59529 | 2.20529 | 2.36857 | 3.27761 | 2.34334 | 2.27655 | 2.81512 | 3.29520 | 2.82814 | 2.27438 | 1.43864 | 2.63544 |
 
-## SLR
+### 3.3.3. SLR
 
-### Meta-Analysis Plot
-
-![](../../../../outputs/network-comparison/Individual/plots/Genus/meta-analysis-slr-1.png)<!-- -->
-
-### Individual Plots
-
-![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-4.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-5.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-6.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-7.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-8.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-9.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Genus/single-network-slr-10.png)<!-- -->
-
-### Global Properties
-
-|  | agp.group ’’ | agp.group ’’ | fukui.group ’’ | fukui.group ’’ | hugerth.group ’’ | hugerth.group ’’ | labus.group ’’ | labus.group ’’ | liu.group ’’ | liu.group ’’ | lopresti.group ’’ | lopresti.group ’’ | mars.group ’’ | mars.group ’’ | nagel.group ’’ | nagel.group ’’ | zeber.group ’’ | zeber.group ’’ | zhuang.group ’’ | zhuang.group ’’ |
+|  | agp.Healthy | agp.IBS | fukui.Healthy | fukui.IBS | hugerth.Healthy | hugerth.IBS | labus.Healthy | labus.IBS | liu.Healthy | liu.IBS | lopresti.Healthy | lopresti.IBS | mars.Healthy | mars.IBS | nagel.Healthy | nagel.IBS | zeber.Healthy | zeber.IBS | zhuang.Healthy | zhuang.IBS |
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Relative LCC size | 0.17647 | 0.17647 | 0.73034 | 0.88764 | 0.13953 | 0.83721 | 0.10145 | 0.39130 | 0.76923 | 0.79487 | 0.56897 | 0.10345 | 0.86747 | 0.06024 | 0.79518 | 0.77108 | 0.62651 | 0.81928 | 0.61628 | 0.72093 |
 | Clustering coefficient | 0.23378 | 0.21220 | 0.15510 | 0.11498 | 0.00000 | 0.10802 | 0.33337 | 0.09019 | 0.22053 | 0.15056 | 0.33156 | 0.00000 | 0.46720 | 0.00000 | 0.25306 | 0.33648 | 0.27867 | 0.12843 | 0.34982 | 0.19178 |
