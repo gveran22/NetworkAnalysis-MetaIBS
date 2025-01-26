@@ -203,7 +203,7 @@ plot_network_comparison(common_mat_H, common_mat_IBS,
 
 ## 3.2. Sample Type
 
-```{r sample-type, fig.width=30, fig.height=16, echo=FALSE}
+```{r sample-type, fig.width=30, fig.height=13, echo=FALSE}
 
 #path.samp <- file.path(path.outputs, "sample_type")
 #path.datasets.samp    <- file.path(path.datasets, "sample_type")
@@ -271,7 +271,7 @@ plot_network_comparison(common_mat_H, common_mat_IBS,
 
 ## 3.3. Sequencing Technology
 
-```{r seq-tech, echo=FALSE}
+```{r seq-tech, fig.width=30, fig.height=13, echo=FALSE}
 path.seq <- file.path(path.outputs, "sequencing_tech")
 path.datasets.seq    <- file.path(path.datasets, "sequencing_tech")
 path.assoc_mat <- file.path(path.seq , "association_matrices")
@@ -339,7 +339,7 @@ for (i in 1:length(datasets_names)) {
 
 ## 3.4. Variable Region
 
-```{r global-prop-mb, echo=FALSE}
+```{r var-reg, fig.width=30, fig.height=13, echo=FALSE}
 path.var <- file.path(path.outputs, "variable_region")
 path.datasets.var    <- file.path(path.datasets, "variable_region")
 path.assoc_mat <- file.path(path.var , "association_matrices")

@@ -51,4 +51,4 @@ library(NetCoMi)
 
 ## 3.4. Variable Region
 
-![](../../../../outputs/network-comparison/Combined/plots/Family/global-prop-mb-1.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Family/global-prop-mb-2.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Family/global-prop-mb-3.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Family/global-prop-mb-4.png)<!-- -->
+![](../../../../outputs/network-comparison/Combined/plots/Family/var-reg-1.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Family/var-reg-2.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Family/var-reg-3.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Family/var-reg-4.png)<!-- -->

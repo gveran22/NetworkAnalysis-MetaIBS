@@ -257,7 +257,7 @@ plot_network_comparison(common_mat_H, common_mat_IBS,
 
 ## 3.2. Individual Plots
 
-```{r single-network-glasso, fig.width=30, fig.height=16, echo=FALSE}
+```{r single-network-glasso, fig.width=30, fig.height=13, echo=FALSE}
 layout.gl <- result.gl$layout$layout1
 layout.mb <- result.mb$layout$layout1
 layout.slr <- result.slr$layout$layout1

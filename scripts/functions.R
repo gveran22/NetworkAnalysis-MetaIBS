@@ -241,7 +241,7 @@ plot_network_comparison <- function(meta_H, meta_IBS, layout = NULL, groupNames 
        #title1 = title,
        groupNames = groupNames,
        showTitle = TRUE,
-       cexTitle = 1.3,
+       cexTitle = 1.5,
        hubBorderCol = "gray40")
 }
 
