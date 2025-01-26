@@ -1,0 +1,406 @@
+---
+title: "Meta Analysis - Network Comparison Combined (Order)"
+output: 
+  github_document:
+    html_preview: false
+date: "2024-03-01"
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../../../outputs/network-comparison/Combined/plots/Order/")
+```
+
+```{r library-instalation}
+myPaths <- .libPaths()
+myPaths <- c(myPaths, "~/MetaIBS/MetaIBS-library")
+myPaths <- c(myPaths[3], myPaths[1], myPaths[2])
+.libPaths(myPaths)  # add new path
+```
+
+***********
+# 1. IMPORT
+***********
+
+## 1.1. Libraries
+
+```{r library-import}
+library(phyloseq) # Handling and analysis of high-throughput microbiome census data.
+library(tidyverse)
+library(ggplot2)
+library(SpiecEasi)
+library(igraph)
+library(VennDiagram)
+library(NetCoMi)
+```
+
+```{r path-directories, echo=FALSE}
+# ROOT DIRECTORY (to modify on your computer)
+path.root <- "~/MetaIBS"
+path.datasets    <- file.path(path.root, "data/Combined")
+path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
+path.outputs <- file.path(path.root, "outputs/network-comparison/Combined")
+
+source("~/MetaIBS/scripts/functions.R")
+agg_level <- "Order"
+```
+
+**************
+# 2. FUNCTIONS
+**************
+
+```{r function, eval=TRUE, echo=FALSE}
+# Function to load matrices and filter NULL entries
+load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_index) {
+  matrices <- lapply(datasets_names, function(x) {
+    tryCatch({
+      load(file = file.path(path.assoc_mat, agg_level, paste0("AssocMat_", x, ".RData")))
+      objects <- ls()  # Get loaded objects
+      return(get(objects[object_index]))  # Return the specified object
+    }, error = function(e) {
+      message(paste("Skipping file:", x, "due to error:", e$message))
+      return(NULL)
+    })
+  })
+  Filter(Negate(is.null), matrices)  # Remove NULL entries
+}
+
+# Function to plot meta-analysis comparison
+plot_network_comparison <- function(meta_H, meta_IBS, layout = NULL, groupNames = c("Healthy", "IBS"), 
+                                    dataType = "condDependence", thresh = 0, repulsion =0.7) {
+  props_asso_meta <- network_construct_comparison(meta_H, meta_IBS, dataType = dataType , thresh = thresh)
+  plot(props_asso_meta,
+       layout = layout,
+       repulsion = repulsion,
+       sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 0.7,
+       cexHubLabels = 1,
+       #title1 = title,
+       groupNames = groupNames,
+       showTitle = TRUE,
+       cexTitle = 1.5,
+       hubBorderCol = "gray40")
+}
+
+# Function to process individual plots comparison
+plot_individual_network_comparison <- function(matrix_H, matrix_IBS, meta_H, meta_IBS, 
+                                                layout, datasets_names, method) {
+  sub_adj_H <- matrix_H
+  sub_adj_IBS <- matrix_IBS
+  
+  # Skip if no connected nodes
+  if (sum(sub_adj_H) == 0 && sum(sub_adj_IBS) == 0) {
+    message(paste0("Skipping network ", datasets_names, " due to no connected nodes."))
+    next
+  }
+  
+  common_rows_H <- intersect(rownames(meta_H), rownames(sub_adj_H))
+  common_cols_H <- intersect(colnames(meta_H), colnames(sub_adj_H))
+  common_rows_IBS <- intersect(rownames(meta_IBS), rownames(sub_adj_IBS))
+  common_cols_IBS <- intersect(colnames(meta_IBS), colnames(sub_adj_IBS))
+  
+  filtered_meta_adj_H <- meta_H
+  filtered_meta_adj_IBS <- meta_IBS
+  filtered_meta_adj_H[,] <- 0
+  filtered_meta_adj_IBS[,] <- 0
+  
+  filtered_meta_adj_H[common_rows_H, common_cols_H] <- meta_H[common_rows_H, common_cols_H] * (sub_adj_H[common_rows_H, common_cols_H] != 0)
+  filtered_meta_adj_IBS[common_rows_IBS, common_cols_IBS] <- meta_IBS[common_rows_IBS, common_cols_IBS] * (sub_adj_IBS[common_rows_IBS, common_cols_IBS] != 0)
+  
+  props_asso <- network_construct_comparison(filtered_meta_adj_H, filtered_meta_adj_IBS)
+  plot(props_asso,
+       layout = layout,
+       #sameLayout = TRUE,
+       nodeColor = "cluster",
+       labelScale = FALSE,
+       rmSingles = TRUE,
+       nodeSize = "eigenvector",
+       cexNodes = 0.58,
+       cexLabels = 1.5,
+       cexHubLabels = 1.7,
+       groupNames = c(paste0("Healthy - ", str_to_title(datasets_names)," ",method), 
+                      paste0("IBS - ", str_to_title(datasets_names)," ",method)),
+       cexTitle = 2,
+       hubBorderCol = "gray40")
+  
+}
+
+plot_individual_networks_comparison <- function(matrices_H, matrices_IBS, meta_H, meta_IBS, 
+                                                layout, datasets_names, method) {
+  for (i in seq_along(matrices_H)) {
+    plot_individual_network_comparison(matrices_H[[i]], matrices_IBS[[i]], meta_H, meta_IBS, 
+                                        layout, datasets_names[i], method)
+  }
+}
+```
+
+**********************
+# 3. NETWORK INFERENCE
+**********************
+
+## 3.1. Total Merge
+
+```{r total-merge, fig.width=30, fig.height=13, echo=FALSE}
+path.all<- file.path(path.outputs, "all")
+path.datasets.all    <- file.path(path.datasets, "all")
+path.assoc_mat <- file.path(path.all , "association_matrices")
+path.phylobj_sep <- file.path(path.all , "phyloseq_IBS")
+path.properties <- file.path(path.all , "network_properties")
+path.plots <- file.path(path.all , "plots")
+
+datasets        <- list.files(path.datasets.all, pattern=".rds")
+datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+
+
+asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)[[1]]
+asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)[[1]]
+asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)[[1]]
+asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)[[1]]
+asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)[[1]]
+asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)[[1]]
+
+
+result.gl <- plot_network_comparison(asso_H.gl, asso_IBS.gl, groupNames = c("Merge Network Healthy GLasso", 
+                                                          "Merge Network IBS GLasso"), thresh = 0,
+                                           repulsion = 0.50008)
+result.mb <- plot_network_comparison(asso_H.mb, asso_IBS.mb, groupNames = c("Merge Network Healthy MB", 
+                                                          "Merge Network IBS MB"), thresh = 0,
+                                           repulsion = 0.50008)
+result.slr <- plot_network_comparison(asso_H.slr, asso_IBS.slr, groupNames = c("Merge Network Healthy SLR", 
+                                                          "Merge Network IBS SLR"), thresh = 0,
+                                           repulsion = 0.50008)
+
+### Common associations
+asso_H.gl <- ifelse(asso_H.gl!=0,1,0)
+asso_IBS.gl <- ifelse(asso_IBS.gl!=0,1,0)
+asso_H.mb <- ifelse(asso_H.mb!=0,1,0)
+asso_IBS.mb <- ifelse(asso_IBS.mb!=0,1,0)
+asso_H.slr <- ifelse(asso_H.slr!=0,1,0)
+asso_IBS.slr <- ifelse(asso_IBS.slr!=0,1,0)
+
+common_mat_H <- asso_H.gl*asso_H.mb*asso_H.slr
+common_mat_IBS <- asso_IBS.gl*asso_IBS.mb*asso_IBS.slr
+
+tryCatch({
+plot_network_comparison(common_mat_H, common_mat_IBS, 
+                                      groupNames = c(paste0("Common associations Healthy - ", agg_level), 
+                                                          paste0("Common associations IBS - ", agg_level)),
+                                      dataType ="proportionality", thresh = 0)
+}, error = function(e) {
+  # Custom message when the error occurs
+  if (grepl("There are no connected nodes in both networks", e$message)) {
+    print("No common associations")
+  } else {
+    # Re-throw the error if it's a different issue
+    stop(e)
+  }
+})
+```
+
+## 3.2. Sample Type
+
+```{r sample-type, fig.width=30, fig.height=16, echo=FALSE}
+#path.samp <- file.path(path.outputs, "sample_type")
+#path.datasets.samp    <- file.path(path.datasets, "sample_type")
+#path.assoc_mat <- file.path(path.samp , "association_matrices")
+#path.phylobj_sep <- file.path(path.samp , "phyloseq_IBS")
+#path.properties <- file.path(path.samp , "network_properties")
+#path.plots <- file.path(path.samp , "plots")
+
+#datasets        <- list.files(path.datasets.samp, pattern=".rds")
+#datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+
+
+#asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)[[1]]
+#asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)[[1]]
+#asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)[[1]]
+#asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)[[1]]
+#asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)[[1]]
+#asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)[[1]]
+
+#for (i in 1:length(datasets_names)) {
+  
+#result.gl <- plot_network_comparison(asso_H.gl[[i]], asso_IBS.gl[[i]], 
+#                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy GLasso"), 
+#                                                          paste0(datasets_names[[i]]," Network IBS GLasso")), thresh = 0,
+#                                           repulsion = 0.50008)
+#result.mb <- plot_network_comparison(asso_H.mb[[i]], asso_IBS.mb[[i]], 
+#                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy MB"), 
+#                                                          paste0(datasets_names[[i]]," Network IBS MB")), thresh = 0,
+#                                           repulsion = 0.50008)
+#result.slr <- plot_network_comparison(asso_H.slr[[i]], asso_IBS.slr[[i]], 
+#                                      groupNames = c(paste0(datasets_names[[i]]," Network Healthy SLR"), 
+#                                                          paste0(datasets_names[[i]]," Network IBS SLR")), thresh = 0,
+#                                           repulsion = 0.50008)
+#}
+
+
+### Common associations
+#for (i in 1:length(datasets_names)) {
+#  asso_H.g<- ifelse((asso_H.gl[[i]])!=0,1,0)
+#  asso_IBS.g <- ifelse(asso_IBS.gl[[i]]!=0,1,0)
+#  asso_H.m <- ifelse(asso_H.mb[[i]]!=0,1,0)
+#  asso_IBS.m <- ifelse(asso_IBS.mb[[i]]!=0,1,0)
+#  asso_H.sl <- ifelse(asso_H.slr[[i]]!=0,1,0)
+#  asso_IBS.sl <- ifelse(asso_IBS.slr[[i]]!=0,1,0)
+  
+#  common_mat_H <- asso_H.g*asso_H.m*asso_H.sl
+#  common_mat_IBS <- asso_IBS.g*asso_IBS.m*asso_IBS.sl
+  
+#  tryCatch({
+#  common.plot <- plot_network_comparison(common_mat_H, common_mat_IBS, 
+#                                        groupNames = c(paste0("Common associations Healthy - ", datasets_names[[i]]), 
+#                                                            paste0("Common associations IBS - ", datasets_names[[i]])),
+#                                        dataType ="proportionality", thresh = 0)
+#  }, error = function(e) {
+#  # Custom message when the error occurs
+#  if (grepl("There are no connected nodes in both networks", e$message)) {
+#    print("No common associations")
+#  } else {
+#    # Re-throw the error if it's a different issue
+#    stop(e)
+#  }
+#})
+#} 
+```
+
+## 3.3. Sequencing Technology
+
+```{r seq-tech, echo=FALSE}
+path.seq <- file.path(path.outputs, "sequencing_tech")
+path.datasets.seq    <- file.path(path.datasets, "sequencing_tech")
+path.assoc_mat <- file.path(path.seq , "association_matrices")
+path.phylobj_sep <- file.path(path.seq , "phyloseq_IBS")
+path.properties <- file.path(path.seq , "network_properties")
+path.plots <- file.path(path.seq , "plots")
+
+datasets        <- list.files(path.datasets.seq, pattern=".rds")
+datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+
+
+asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
+asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)
+asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
+asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)
+asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
+asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)
+
+
+for (i in 1:length(datasets_names)) {
+  
+result.gl <- plot_network_comparison(asso_H.gl[[i]], asso_IBS.gl[[i]], 
+                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy GLasso"), 
+                                                          paste0(datasets_names[[i]]," Network IBS GLasso")), thresh = 0,
+                                           repulsion = 0.50008)
+result.mb <- plot_network_comparison(asso_H.mb[[i]], asso_IBS.mb[[i]], 
+                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy MB"), 
+                                                          paste0(datasets_names[[i]]," Network IBS MB")), thresh = 0,
+                                           repulsion = 0.50008)
+result.slr <- plot_network_comparison(asso_H.slr[[i]], asso_IBS.slr[[i]], 
+                                      groupNames = c(paste0(datasets_names[[i]]," Network Healthy SLR"), 
+                                                          paste0(datasets_names[[i]]," Network IBS SLR")), thresh = 0,
+                                           repulsion = 0.50008)
+}
+
+
+### Common associations
+for (i in 1:length(datasets_names)) {
+  asso_H.g<- ifelse((asso_H.gl[[i]])!=0,1,0)
+  asso_IBS.g <- ifelse(asso_IBS.gl[[i]]!=0,1,0)
+  asso_H.m <- ifelse(asso_H.mb[[i]]!=0,1,0)
+  asso_IBS.m <- ifelse(asso_IBS.mb[[i]]!=0,1,0)
+  asso_H.sl <- ifelse(asso_H.slr[[i]]!=0,1,0)
+  asso_IBS.sl <- ifelse(asso_IBS.slr[[i]]!=0,1,0)
+  
+  common_mat_H <- asso_H.g*asso_H.m*asso_H.sl
+  common_mat_IBS <- asso_IBS.g*asso_IBS.m*asso_IBS.sl
+  
+  tryCatch({
+  common.plot <- plot_network_comparison(common_mat_H, common_mat_IBS, 
+                                        groupNames = c(paste0("Common associations Healthy - ", datasets_names[[i]]), 
+                                                            paste0("Common associations IBS - ", datasets_names[[i]])),
+                                        dataType ="proportionality", thresh = 0)
+  }, error = function(e) {
+  # Custom message when the error occurs
+  if (grepl("There are no connected nodes in both networks", e$message)) {
+    print("No common associations")
+  } else {
+    # Re-throw the error if it's a different issue
+    stop(e)
+  }
+})
+}
+```
+
+## 3.4. Variable Region
+
+```{r global-prop-mb, echo=FALSE}
+path.var <- file.path(path.outputs, "variable_region")
+path.datasets.var    <- file.path(path.datasets, "variable_region")
+path.assoc_mat <- file.path(path.var , "association_matrices")
+path.phylobj_sep <- file.path(path.var , "phyloseq_IBS")
+path.properties <- file.path(path.var , "network_properties")
+path.plots <- file.path(path.var , "plots")
+
+datasets        <- list.files(path.datasets.var, pattern=".rds")
+datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+
+
+asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
+asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)
+asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
+asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)
+asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
+asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)
+
+
+for (i in 1:length(datasets_names)) {
+  
+result.gl <- plot_network_comparison(asso_H.gl[[i]], asso_IBS.gl[[i]], 
+                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy GLasso"), 
+                                                          paste0(datasets_names[[i]]," Network IBS GLasso")), thresh = 0,
+                                           repulsion = 0.50008)
+result.mb <- plot_network_comparison(asso_H.mb[[i]], asso_IBS.mb[[i]], 
+                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy MB"), 
+                                                          paste0(datasets_names[[i]]," Network IBS MB")), thresh = 0,
+                                           repulsion = 0.50008)
+result.slr <- plot_network_comparison(asso_H.slr[[i]], asso_IBS.slr[[i]], 
+                                      groupNames = c(paste0(datasets_names[[i]]," Network Healthy SLR"), 
+                                                          paste0(datasets_names[[i]]," Network IBS SLR")), thresh = 0,
+                                           repulsion = 0.50008)
+}
+
+
+### Common associations
+for (i in 1:length(datasets_names)) {
+  asso_H.g<- ifelse((asso_H.gl[[i]])!=0,1,0)
+  asso_IBS.g <- ifelse(asso_IBS.gl[[i]]!=0,1,0)
+  asso_H.m <- ifelse(asso_H.mb[[i]]!=0,1,0)
+  asso_IBS.m <- ifelse(asso_IBS.mb[[i]]!=0,1,0)
+  asso_H.sl <- ifelse(asso_H.slr[[i]]!=0,1,0)
+  asso_IBS.sl <- ifelse(asso_IBS.slr[[i]]!=0,1,0)
+  
+  common_mat_H <- asso_H.g*asso_H.m*asso_H.sl
+  common_mat_IBS <- asso_IBS.g*asso_IBS.m*asso_IBS.sl
+  
+  tryCatch({
+  common.plot <- plot_network_comparison(common_mat_H, common_mat_IBS, 
+                                        groupNames = c(paste0("Common associations Healthy - ", datasets_names[[i]]), 
+                                                            paste0("Common associations IBS - ", datasets_names[[i]])),
+                                        dataType ="proportionality", thresh = 0)
+  }, error = function(e) {
+  # Custom message when the error occurs
+  if (grepl("There are no connected nodes in both networks", e$message)) {
+    print("No common associations")
+  } else {
+    # Re-throw the error if it's a different issue
+    stop(e)
+  }
+})
+} 
+```
+
