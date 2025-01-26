@@ -41,6 +41,7 @@ path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.properties <- file.path(path.outputs , "network_properties")
+path.venn_diag <- file.path(path.outputs , "venn-diagramm")
 path.plots <- file.path(path.outputs , "plots")
 
 source("~/MetaIBS/scripts/functions.R")
@@ -147,23 +148,25 @@ matrices.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
 matrices.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
 
 meta.gl <- summary_assoc_matrix(matrices.gl, "mean")
-result.gl <- plot_network(meta.gl, title = "Mean Network GLasso", thresh = 0.02, repulsion = 0.4900003)
-
 meta.mb <- summary_assoc_matrix(matrices.mb, "mean")
-result.mb <- plot_network(meta.mb, title = "Mean Network MB", thresh = 0.02, repulsion = 0.500001)
-
 meta.slr <- summary_assoc_matrix(matrices.slr, "mean")
-result.slr <- plot_network(meta.slr, title = "Mean Network SLR", thresh = 0.02, repulsion = 0.6012)
+
+thresh.gl <- mean(meta.gl) + sd(meta.gl)
+thresh.mb <- mean(meta.mb) + sd(meta.mb)
+thresh.slr <- mean(meta.slr) + sd(meta.slr)
+
+result.gl <- plot_network(meta.gl, title = "Mean Network GLasso", thresh = thresh.gl, repulsion = 0.6)
+result.mb <- plot_network(meta.mb, title = "Mean Network MB", thresh = thresh.mb, repulsion = 0.53)
+result.slr <- plot_network(meta.slr, title = "Mean Network SLR", thresh = thresh.slr, repulsion = 0.6)
 
 prop.gl <- summary_assoc_matrix(matrices.gl, "proportion")
+prop.mb <- summary_assoc_matrix(matrices.mb, "proportion")
+prop.slr <- summary_assoc_matrix(matrices.slr, "proportion")
+
 result.prop.gl <- plot_network(prop.gl, title = "Proportion Network GLasso",  dataType ="proportionality", 
                                thresh = 0.4)
-
-prop.mb <- summary_assoc_matrix(matrices.mb, "proportion")
 result.prop.mb <- plot_network(prop.mb, title = "Proportion Network MB",  dataType ="proportionality",
                                thresh = 0.4)
-
-prop.slr <- summary_assoc_matrix(matrices.slr, "proportion")
 result.prop.slr <- plot_network(prop.slr, title = "Proportion Network SLR",  dataType ="proportionality",
                                 thresh = 0.4)
 
@@ -171,6 +174,8 @@ result.prop.slr <- plot_network(prop.slr, title = "Proportion Network SLR",  dat
 asso_g <- network_construct(prop.gl, "proportionality", thresh = 0.4)$input$assoMat1
 asso_mb <- network_construct(prop.mb, "proportionality", thresh = 0.4)$input$assoMat1
 asso_slr <- network_construct(prop.slr, "proportionality", thresh = 0.4)$input$assoMat1
+
+get_venn_diagram(asso_g, asso_mb, asso_slr, paste0("Venn Diagram ",agg_level))
 
 asso_g <- ifelse(asso_g!=0,1,0)
 asso_mb <- ifelse(asso_mb!=0,1,0)

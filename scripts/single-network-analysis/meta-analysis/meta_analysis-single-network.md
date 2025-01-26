@@ -41,6 +41,9 @@ library(NetCoMi)
 
 ## 3.1. Summary Plots
 
+    ## png 
+    ##   2
+
 <img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-1.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-2.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-3.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-4.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-5.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-6.png" width="33%" /><img src="../../../outputs/single-network-analysis/Individual/plots/Family/meta-analysis-7.png" width="33%" />
 
 ## 3.2. Individual Plots
