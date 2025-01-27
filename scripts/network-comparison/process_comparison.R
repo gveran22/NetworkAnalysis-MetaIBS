@@ -53,7 +53,7 @@ run_analysis <- function(agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar, 
 
 ########################### Individual Analysis ##################################
 
-path.datasets    <- file.path(path.root, "data/Individual")
+path.datasets    <- file.path(path.root, "data")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
 path.phylobj_sep <- file.path(path.outputs , "phyloseq_IBS")

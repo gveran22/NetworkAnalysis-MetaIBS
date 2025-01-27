@@ -23,7 +23,7 @@ source("tools/functions.R")
 ########################### Individual Analysis ##################################
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Individual")
+path.datasets    <- file.path(path.root, "data")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.venn_diag <- file.path(path.outputs , "venn-diagramm")
@@ -60,7 +60,7 @@ combined_paths <- list(
 agg_level <- "Order"
 # Run combined analysis for each variable and configuration
 for (path_suffix in names(combined_paths)) {
-  path.datasets    <- file.path(path.root, "data/Combined/", combined_paths[[path_suffix]])
+  path.datasets    <- file.path(path.root, "build/Combined/", combined_paths[[path_suffix]])
   path.outputs <- file.path(path.root, "outputs/network-comparison", combined_paths[[path_suffix]])
   path.assoc_mat <- file.path(path.outputs , "association_matrices")
   path.venn_diag <- file.path(path.outputs , "venn-diagramm")

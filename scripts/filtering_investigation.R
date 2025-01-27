@@ -25,8 +25,8 @@ library(microViz)
 library(NetCoMi)
 
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree")
-path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
+path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
+path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
 
@@ -305,99 +305,3 @@ simulation <- all_filtering_comparison(physeq=datasets_names,
 
 write.csv(simulation, "./outputs/investigation/Overall_investigation_netcomi_comparison_highestVar-totalReads.csv", 
           row.names = FALSE)
-
-
-
-# filtering_comparison_2 <- function(physeq_name, agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar){
-#   
-#   
-#   # Read the phyloseq object
-#   phyloseq <- readRDS(file.path(path.phylobj, agg_level, paste0("agglo_",physeq_name,".rds")))
-#   
-#   dimensions <- vector("integer")
-#   dimensions <- dim(phyloseq@otu_table)
-#   
-#   net_asso <- netConstruct(phyloseq,
-#                            filtTax =  filtTax,
-#                            filtTaxPar = filtTaxPar,
-#                            filtSamp =   filtSamp,
-#                            filtSampPar =  filtSampPar,
-#                            measure = NULL,
-#                            normMethod = "none", 
-#                            zeroMethod = "none",
-#                            sparsMethod = "none", 
-#                            dissFunc = "signed",
-#                            verbose = 3)
-#   
-#   
-#   rownames(phyloseq@tax_table) <- taxa[,agg_level]
-#   
-#   group_vec <- phyloseq::get_variable(phyloseq, "host_disease")
-#   
-#   # Select the two groups of interest (level "none" is excluded)
-#   sel <- which(group_vec %in% c("IBS", "Healthy"))
-#   group_vec <- group_vec[sel]
-#   otutab <- as(phyloseq@otu_table, "matrix")
-#   otutab <- otutab[sel, ]
-#   
-#   variable_names <- c("IBS", "Healthy")
-#   
-#   net_IBS <- netConstruct(data= otutab,
-#                           group = group_vec, 
-#                           filtTax = filtTax,
-#                           filtTaxPar = filtTaxPar, 
-#                           filtSamp = filtSamp,
-#                           filtSampPar = filtSampPar, 
-#                           measure = NULL,
-#                           normMethod = "none", 
-#                           zeroMethod = "none",
-#                           sparsMethod = "none", 
-#                           dissFunc = "signed",
-#                           jointPrepro = TRUE,
-#                           verbose = 3)
-#   
-#   dimensions <- c(dimensions, dim(net_IBS$countMat1), dim(net_IBS$countMat2))
-#   names(dimensions) <- c("samples_agglo", "ASVs_agglo", 
-#                          "samples_filtered_IBS", "ASVs_filtered_IBS", 
-#                          "samples_filtered_H", "ASVs_filtered_H")
-# }
-# 
-# all_filtering_comparison_2 <- function(physeq, agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar){
-#   
-#   prs <- expand_grid(physeq, agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar)
-#   
-#   dimensions <- vector("integer")
-#   dimensions_final <- vector("integer")
-#   
-#   for (i in 1:nrow(prs)) {
-#     dimensions <- filtering_comparison_2(physeq_name = prs$physeq[i],
-#                                     agg_level = prs$agg_level[i],
-#                                     filtTax =  prs$filtTax[i],
-#                                     filtTaxPar = prs$filtTaxPar[i],
-#                                     filtSamp =   prs$filtSamp[i],
-#                                     filtSampPar = prs$filtSampPar[i])
-#     
-#     dimensions_final <- rbind(dimensions_final,dimensions, deparse.level = 0)
-#     
-#   }
-#   
-#   #prs <- as.data.frame(prs)
-#   
-#   prs$filtTaxPar <- sapply(prs$filtTaxPar, function(x) x[[1]])
-#   prs$filtSampPar <- sapply(prs$filtSampPar, function(x) x[[1]])
-#   
-#   
-#   prs_final <- cbind(prs,dimensions_final)
-#   #dimensions_final <- data.frame(dimensions_final)
-#   return(prs_final)
-# }
-# 
-# simulation <- all_filtering_comparison_2(physeq=datasets_names,
-#                                        agg_level=c("Order"),
-#                                        filtTax =  "numbSamp",
-#                                        filtTaxPar = c(list(numbSamp=5)),
-#                                        filtSamp =   "totalReads",
-#                                        filtSampPar = c(list(totalReads=500)))
-# 
-# write.csv(simulation, "./outputs/investigation/Order/Overall_investigation_comparison_2.csv", 
-#           row.names = FALSE)

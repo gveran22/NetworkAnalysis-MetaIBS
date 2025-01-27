@@ -26,7 +26,7 @@ library(NetCoMi)
 
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree")
+path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
 path.filt_phy <- file.path(path.outputs , "filtered_otus")

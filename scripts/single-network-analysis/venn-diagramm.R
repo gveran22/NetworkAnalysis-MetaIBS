@@ -20,7 +20,7 @@ library(NetCoMi)
 
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Individual")
+path.datasets    <- file.path(path.root, "data")
 path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.venn_diag <- file.path(path.outputs , "venn-diagramm")
