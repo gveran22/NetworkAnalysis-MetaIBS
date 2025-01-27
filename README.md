@@ -48,6 +48,8 @@ Clone the repository:
 `git clone https://github.com/gveran22/NetworkAnalysis-MetaIBS.git  
 cd NetworkAnalysis-MetaIBS`
 
+<br/>
+
 ## **Usage**
 1. Preprocessing Data
    - Place your raw input files in the `data/Individual/` folder.
@@ -64,24 +66,32 @@ Rscript scripts/network-comparison/run_comparison.R
 4. Meta-Analysis
    - Review the final meta-analysis results in `docs/meta-analysis/` 
 
+<br/>
+
 ## **Folder Details**
 **[data/](data/)**
-- `Individual/`: Raw input files for the project.  
+- `Individual/`: Raw input files for the project.
+
 **[build/](build/)**
 - `Agglomeration/`: Aggregated datasets by taxonomy level.
 - `Combined/`: Merged and preprocessed datasets.  
+
 **[outputs/](outputs/)**
 - `investigation/`: Results from exploratory filtering and testing.
 - `network-comparison/`: Final results from network comparison analyses.
    - `Combined/`: Results from merged datasets.
    - `Individual/`: Results from individual datasets.
-- `single-network-analysis/`: Results from analyzing individual datasets.  
+- `single-network-analysis/`: Results from analyzing individual datasets. 
+
 **[scripts/](scripts/)**
 - `network-comparison/`: Scripts to process and compare networks across datasets.
 - `single-network-analysis/`: Scripts to analyze individual datasets.  
+
 **[docs/](docs/)**
 - `meta-analysis/`: Reports and visualizations summarizing the findings.
 - `methodology.md`: Details on data filtering and processing steps.  
+
+<br/>
 
 ## **Contributing**
 Contributions are welcome! Please:
@@ -89,8 +99,12 @@ Contributions are welcome! Please:
 2. Create a feature branch.
 3. Submit a pull request with a detailed description of changes.
 
+<br/>
+
 ## **License**
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+<br/>
 
 ## **Contact**
 For questions or suggestions, contact Your Name.

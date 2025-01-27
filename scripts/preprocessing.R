@@ -26,8 +26,8 @@ library(NetCoMi)
 
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.phylobj    <- file.path(path.root, "data/Combined")
-path.output <- file.path(path.root, "data/Agglomeration")
+path.phylobj    <- file.path(path.root, "build/Combined")
+path.output <- file.path(path.root, "build/Agglomeration")
 
 # ****************
 # 2. PROCESSING ##
@@ -137,7 +137,7 @@ saveRDS(physeq, file.path(path.output,  "Individual", agg_level,
                           paste0("agglo_","zhuang",".rds")))
 
 
-############# 2.2. Merge depending on variable region #################################
+############# 2.2. Agglomeration depending on variable region #################################
 
 ###### Separate variable region V4 (agp - mars - nagel -pozuelo - zhu) #####
 
@@ -152,7 +152,7 @@ cat("Nb of V4 samples:", nsamples(physeq.v4))
 saveRDS(physeq.v4, file.path(path.output, "Combined/variable_region", agg_level, "agglo_v4.rds"))
 
 
-############# 2.3. Network Anaylsis depending on sample_type ##########################
+############# 2.3. Agglomeration depending on sample_type ##########################
 
 if (!dir.exists(file.path(path.output, "Combined/sample_type", agg_level))) {
   dir.create(file.path(path.output, "Combined/sample_type", agg_level), recursive = TRUE)
@@ -171,7 +171,7 @@ saveRDS(physeq.fecal, file.path(path.output, "Combined/sample_type", agg_level, 
 saveRDS(physeq.sigmoid, file.path(path.output, "Combined/sample_type", agg_level, "agglo_sigmoid.rds"))
 
 
-############# 2.4. Network Anaylsis depending on sequencing_tech #####################
+############# 2.4. Agglomeration depending on sequencing_tech #####################
 
 if (!dir.exists(file.path(path.output, "Combined/sequencing_tech", agg_level))) {
   dir.create(file.path(path.output, "Combined/sequencing_tech", agg_level), recursive = TRUE)
