@@ -1,6 +1,6 @@
-# Network Analysis - MetaIBS
+# Network Inference and Comparative Analysis of Gut Microbiomes in Healthy and IBS-Patients
 
-This repository contains the data, scripts, and results for the **Network Analysis - MetaIBS** project. The study focuses on analyzing microbial networks using taxonomy-level aggregations and comparing network structures across datasets and experimental conditions.
+This repository is an extension of the **MetaIBS project** ([link to project](https://github.com/bio-datascience/MetaIBS)). It contains the data, scripts, and results for the Inference and Network Analysis of the MetaIBs datasets. The study focuses on analyzing microbial networks using taxonomy-level aggregations and comparing network structures divided by the `healthy`status across datasets as well as the merged of the datasets based on some important variables.
 
 ---
 
@@ -11,7 +11,7 @@ This repository contains the data, scripts, and results for the **Network Analys
 ├── data/                     # Raw input data
 ├── build/                    # Intermediate processed data
 │   ├── Agglomeration/        # Aggregated data by taxonomy level
-│   └── Combined/             # Preprocessed data for analyses
+│   └── ...             
 ├── outputs/                  # Key results and exploratory outputs
 │   ├── investigation/        # Filtering and exploratory results
 │   ├── network-comparison/   # Final network comparison outputs
@@ -30,7 +30,7 @@ This repository contains the data, scripts, and results for the **Network Analys
 ├── tools/                    # Reusable functions and utilities
 │   ├── functions.R
 │   ├── analysis_configs.R 
-│   └── combined_variables.R
+│   └── anaylsis_variables.R
 ├── LICENSE                   # License file
 └── README.md                 # Project overview
 
@@ -54,27 +54,28 @@ cd NetworkAnalysis-MetaIBS`
 
 <br/>
 
-## **Usage**
+## **How to use this repository**
 1. Preprocessing Data
-   - Place your raw input files in the `data/Individual/` folder.
-   - Run the preprocessing script in `scripts/`:  
-        [Contribution guidelines for this project] (scripts/single-network-analysis/preprocessing.R)
+   - Place your raw input files in the [data/](data/) folder.
+   - Use the preprocessing script in `scripts/` as a reference for preprocessing:
+   everything you need to know is in the [scripts/preprocessing.R](scripts/preprocessing.R).
+   - Save all your preprocessed data in the [build/](build/) folder.
 
 2. Single-Network Analysis
-   - Analyze individual datasets using the `single-network-analysis` scripts:  
-Rscript scripts/single-network-analysis/run_analysis.R
+   - Define your filtering parameters in the [tools/analysis_configs.R](tools/analysis_configs.R) file.  
+   - Run the individual analysis on each dataset using the [scripts/single-network-analysis/](scripts/single-network-analysis/) scripts:   `scripts/single-network-analysis/run_analysis.R`  
 
 3. Network Comparison
-   - Compare networks using the `network-comparison` pipeline:
-Rscript scripts/network-comparison/run_comparison.R
+   - Define your variables parameters in the [tools/analysis_variables.R](tools/analysis_variables.R) file.  
+   - Run the network comparison analysis for each dataset, the total merge and the variables you defined in the step before, using the [scripts/network-comparison/](scripts/network-comparison/) scripts:  scripts/network-comparison/run_comparison.R
+
 4. Meta-Analysis
-   - Review the final meta-analysis results in `docs/meta-analysis/` 
+   - Review the final meta-analysis results in [docs/meta-analysis/](docs/meta-analysis/) adapting the files with your variables.
 
 <br/>
 
 ## **Folder Details**
-**[data/](data/)**
-- `Individual/`: Raw input files for the project.
+**[data/](data/)**: Raw input files for the project.
 
 **[build/](build/)**
 - `Agglomeration/`: Aggregated datasets by taxonomy level.
@@ -106,12 +107,12 @@ Contributions are welcome! Please:
 <br/>
 
 ## **License**
-This project is licensed under the MIT License. See the LICENSE file for details.
+See the LICENSE file for details.
 
 <br/>
 
 ## **Contact**
-For questions or suggestions, contact Your Name.
+For questions or suggestions, contact .
 
 
 
