@@ -23,7 +23,6 @@ library(tidyverse)
 library(ggplot2)
 library(SpiecEasi)
 library(igraph)
-library(VennDiagram)
 library(NetCoMi)
 ```
 

@@ -39,12 +39,12 @@ path.plots <- file.path(path.outputs , "plots")
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
 
-source("scripts/functions.R")
+source("tools/functions.R")
 source("scripts/single-network-analysis/filtering.R")
 source("scripts/single-network-analysis/fit_network.R")
 source("scripts/single-network-analysis/assoc_mat.R")
 source("scripts/single-network-analysis/net_properties.R")
-source("scripts/analysis_configs.R")
+source("tools/analysis_configs.R")
 
 
 run_single_network_analysis <- function(agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar, datasets_names) {

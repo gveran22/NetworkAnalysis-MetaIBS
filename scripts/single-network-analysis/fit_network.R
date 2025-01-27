@@ -4,7 +4,7 @@
 # Author: Gilary Evans, Vera Nunez
 # **********************************
 
-source("scripts/functions.R")
+source("tools/functions.R")
 
 fit_network <- function(physeq_name, agg_level){
   
@@ -39,9 +39,3 @@ fit_network <- function(physeq_name, agg_level){
                                             paste0("NetFits_",physeq_name,".RData")))
 
 }
-
-
-
-
-
-

@@ -10,7 +10,7 @@ date: "2024-03-01"
 knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../../outputs/single-network-analysis/Individual/plots/Family/") 
 ```
 
-```{r library-instalation}
+```{r library-instalation, echo=FALSE}
 myPaths <- .libPaths()
 myPaths <- c(myPaths, "~/MetaIBS/MetaIBS-library")
 myPaths <- c(myPaths[3], myPaths[1], myPaths[2])
@@ -41,10 +41,9 @@ path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.properties <- file.path(path.outputs , "network_properties")
-path.venn_diag <- file.path(path.outputs , "venn-diagramm")
 path.plots <- file.path(path.outputs , "plots")
 
-source("~/MetaIBS/scripts/functions.R")
+source("~/MetaIBS/tools/functions.R")
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
 agg_level <- "Family"

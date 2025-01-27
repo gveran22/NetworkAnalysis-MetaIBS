@@ -6,7 +6,7 @@ output:
 date: "2024-03-01"
 ---
 
-```{r setup, include=FALSE} 
+```{r setup, include=FALSE, echo=FALSE} 
 knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../../../outputs/network-comparison/Combined/plots/Family/")
 ```
 
@@ -29,18 +29,17 @@ library(tidyverse)
 library(ggplot2)
 library(SpiecEasi)
 library(igraph)
-library(VennDiagram)
 library(NetCoMi)
 ```
 
 ```{r path-directories, echo=FALSE}
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Combined")
-path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
+path.datasets    <- file.path(path.root, "build/Combined")
+path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Combined")
 
-source("~/MetaIBS/scripts/functions.R")
+source("~/MetaIBS/tools/functions.R")
 agg_level <- "Family"
 ```
 
@@ -216,12 +215,12 @@ plot_network_comparison(common_mat_H, common_mat_IBS,
 #datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
 
 
-#asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)[[1]]
-#asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)[[1]]
-#asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)[[1]]
-#asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)[[1]]
-#asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)[[1]]
-#asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)[[1]]
+#asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
+#asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)
+#asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
+#asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)
+#asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
+#asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)
 
 #for (i in 1:length(datasets_names)) {
   

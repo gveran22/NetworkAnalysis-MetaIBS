@@ -18,7 +18,7 @@ library(igraph)
 library(microViz)
 library(NetCoMi)
 
-source("scripts/functions.R")
+source("tools/functions.R")
 
 ########################### Individual Analysis ##################################
 # ROOT DIRECTORY (to modify on your computer)
@@ -82,4 +82,3 @@ for (path_suffix in names(combined_paths)) {
     
   }
 }
-

@@ -35,11 +35,3 @@ filtering <- function(physeq_name, agg_level,
   save(physeq_filt, file=file.path(path.filt_phy, agg_level, paste0("Filt_",physeq_name,".RData")))
 
 }
-
-
-
-
-
-
-
-

@@ -35,11 +35,3 @@ filtering <- function(physeq_name, agg_level,
   #Saving filtered OTU
   save(physeq_filt_IBS, physeq_filt_H, file=file.path(path.filt_phy, agg_level, paste0("Filt_",physeq_name,".RData")))
 }
-
-
-
-
-
-
-
-

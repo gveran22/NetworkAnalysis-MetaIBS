@@ -39,6 +39,4 @@ preprocessing_comparison <- function(physeq_name, agg_level){
   #Saving phyloseq objects
   save(physeq_IBS, physeq_H, file=file.path(path.phylobj_sep, agg_level, 
                                             paste0("HostDisease_",physeq_name,".RData")))
-  
 }
-

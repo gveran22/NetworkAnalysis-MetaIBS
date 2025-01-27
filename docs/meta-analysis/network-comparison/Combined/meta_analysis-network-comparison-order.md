@@ -2,13 +2,6 @@ Meta Analysis - Network Comparison Combined (Order)
 ================
 2024-03-01
 
-``` r
-myPaths <- .libPaths()
-myPaths <- c(myPaths, "~/MetaIBS/MetaIBS-library")
-myPaths <- c(myPaths[3], myPaths[1], myPaths[2])
-.libPaths(myPaths)  # add new path
-```
-
 ------------------------------------------------------------------------
 
 # 1. IMPORT
@@ -23,7 +16,6 @@ library(tidyverse)
 library(ggplot2)
 library(SpiecEasi)
 library(igraph)
-library(VennDiagram)
 library(NetCoMi)
 ```
 
@@ -44,6 +36,8 @@ library(NetCoMi)
 ![](../../../../outputs/network-comparison/Combined/plots/Order/total-merge-1.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/total-merge-2.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/total-merge-3.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/total-merge-4.png)<!-- -->
 
 ## 3.2. Sample Type
+
+![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-1.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-2.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-3.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-4.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-5.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-6.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-7.png)<!-- -->![](../../../../outputs/network-comparison/Combined/plots/Order/sample-type-8.png)<!-- -->
 
 ## 3.3. Sequencing Technology
 

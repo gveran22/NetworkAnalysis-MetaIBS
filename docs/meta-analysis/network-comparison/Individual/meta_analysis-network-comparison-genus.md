@@ -2,13 +2,6 @@ Meta Analysis - Network Comparison (Genus)
 ================
 2024-03-01
 
-``` r
-myPaths <- .libPaths()
-myPaths <- c(myPaths, "~/MetaIBS/MetaIBS-library")
-myPaths <- c(myPaths[3], myPaths[1], myPaths[2])
-.libPaths(myPaths)  # add new path
-```
-
 ------------------------------------------------------------------------
 
 # 1. IMPORT
@@ -23,7 +16,6 @@ library(tidyverse)
 library(ggplot2)
 library(SpiecEasi)
 library(igraph)
-library(VennDiagram)
 library(NetCoMi)
 ```
 

@@ -4,7 +4,7 @@
 # Author: Gilary Evans, Vera Nunez
 # **************************************
 
-source("scripts/functions.R")
+source("tools/functions.R")
 
 get_network_properties <- function(physeq_name, agg_level){
   
@@ -30,4 +30,3 @@ get_network_properties <- function(physeq_name, agg_level){
        file=file.path(path.properties, agg_level, 
                       paste0("NetProp_",physeq_name,".RData")))
 }
-

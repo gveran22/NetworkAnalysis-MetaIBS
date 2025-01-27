@@ -25,7 +25,7 @@ path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.venn_diag <- file.path(path.outputs , "venn-diagramm")
 
-source("scripts/functions.R")
+source("tools/functions.R")
 
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)

@@ -26,13 +26,13 @@ library(NetCoMi)
 
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-source("scripts/functions.R")
+source("tools/functions.R")
 source("scripts/network-comparison/preprocessing_comparison.R")
 source("scripts/network-comparison/filtering_comparison.R")
 source("scripts/network-comparison/fit_network_comparison.R")
 source("scripts/network-comparison/assoc_mat_comparison.R")
 source("scripts/network-comparison/net_properties_comparison.R")
-source("scripts/analysis_configs.R")
+source("tools/analysis_configs.R")
 
 
 run_analysis <- function(agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar, datasets_names) {
@@ -54,7 +54,7 @@ run_analysis <- function(agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar, 
 ########################### Individual Analysis ##################################
 
 path.datasets    <- file.path(path.root, "data/Individual")
-path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
+path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
 path.phylobj_sep <- file.path(path.outputs , "phyloseq_IBS")
 path.filt_phy <- file.path(path.outputs , "filtered_otus")
@@ -71,8 +71,6 @@ for (config in analysis_configs) {
   run_analysis(config$agg_level, config$filtTax, config$filtTaxPar, config$filtSamp, config$filtSampPar, datasets_names)
 }
 
-
-
 ########################### Combined Analysis ####################################
 
 # Combined analysis paths
@@ -85,8 +83,8 @@ combined_paths <- list(
 
 # Run combined analysis for each variable and configuration
 for (path_suffix in names(combined_paths)) {
-  path.datasets    <- file.path(path.root, "data/Combined", combined_paths[[path_suffix]])
-  path.phylobj    <- file.path(path.root, "data/Agglomeration/Combined", combined_paths[[path_suffix]])
+  path.datasets    <- file.path(path.root, "build/Combined", combined_paths[[path_suffix]])
+  path.phylobj    <- file.path(path.root, "build/Agglomeration/Combined", combined_paths[[path_suffix]])
   path.outputs <- file.path(path.root, "outputs/network-comparison/Combined", combined_paths[[path_suffix]])
   path.phylobj_sep <- file.path(path.outputs , "phyloseq_IBS")
   path.filt_phy <- file.path(path.outputs , "filtered_otus")
@@ -103,4 +101,3 @@ for (path_suffix in names(combined_paths)) {
     run_analysis(config$agg_level, config$filtTax, config$filtTaxPar, config$filtSamp, config$filtSampPar, datasets_names)
   }
 }
-

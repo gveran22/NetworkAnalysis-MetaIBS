@@ -4,7 +4,7 @@
 # Author: Gilary Evans, Vera Nunez
 # **********************************
 
-source("scripts/functions.R")
+source("tools/functions.R")
 
 fit_network_comparison <- function(physeq_name, agg_level){
   
@@ -52,6 +52,4 @@ fit_network_comparison <- function(physeq_name, agg_level){
   
   save(se_IBS.gl, se_IBS.mb, se_IBS.slr, se_H.gl, se_H.mb, se_H.slr,
        file=file.path(path.spiec_easi, agg_level, paste0("NetFits_",physeq_name,".RData")))
-  
-  
 }

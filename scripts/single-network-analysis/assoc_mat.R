@@ -4,7 +4,7 @@
 # Author: Gilary Evans, Vera Nunez
 # *************************************
 
-source("scripts/functions.R")
+source("tools/functions.R")
 
 get_assoc_matrix <- function(physeq_name, agg_level){
   
@@ -38,4 +38,3 @@ get_assoc_matrix <- function(physeq_name, agg_level){
   save(assoMat.gl, assoMat.mb, assoMat.slr, file=file.path(path.assoc_mat, agg_level, 
                                             paste0("AssocMat_",physeq_name,".RData")))
 }
-
