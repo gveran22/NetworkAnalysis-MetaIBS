@@ -24,14 +24,15 @@ This repository contains the data, scripts, and results for the **Network Analys
 │   └── single-network-analysis/  # Pipeline for single-network analysis
 ├── docs/                     # Documentation and reports
 │   ├── meta-analysis/        # `.Rmd` and `.md` files with plots and analysis
-│   └── methodology.md        # Filtering or methodology details
+│   └── methodology.md        # Filtering amd methodology details
 ├── tools/                    # Reusable functions and utilities
 │   └── functions.R
 ├── LICENSE                   # License file
 └── README.md                 # Project overview
 
 ```
----
+
+<br/>
 
 ## **Installation**
 To replicate the analysis, you will need:
@@ -43,44 +44,44 @@ To replicate the analysis, you will need:
   - vegan
   - ggplot2
 
-Clone the repository:
-git clone https://github.com/gveran22/NetworkAnalysis-MetaIBS.git
-cd NetworkAnalysis-MetaIBS
+Clone the repository:  
+`git clone https://github.com/gveran22/NetworkAnalysis-MetaIBS.git  
+cd NetworkAnalysis-MetaIBS`
 
 ## **Usage**
 1. Preprocessing Data
-  - Place your raw input files in the data/Individual/ folder.
-  - Run the preprocessing script in scripts/:
-[Contribution guidelines for this project] (scripts/single-network-analysis/preprocessing.R)
+   - Place your raw input files in the `data/Individual/` folder.
+   - Run the preprocessing script in `scripts/`:  
+        [Contribution guidelines for this project] (scripts/single-network-analysis/preprocessing.R)
 
 2. Single-Network Analysis
-  - Analyze individual datasets using the `single-network-analysis` scripts:
+   - Analyze individual datasets using the `single-network-analysis` scripts:  
 Rscript scripts/single-network-analysis/run_analysis.R
 
 3. Network Comparison
-  - Compare networks using the `network-comparison` pipeline:
+   - Compare networks using the `network-comparison` pipeline:
 Rscript scripts/network-comparison/run_comparison.R
 4. Meta-Analysis
-  - Review the final meta-analysis results in `docs/meta-analysis/` 
+   - Review the final meta-analysis results in `docs/meta-analysis/` 
 
 ## **Folder Details**
-**data/**
-- `Individual/`: Raw input files for the project.
-**build/**
+**[data/](data/)**
+- `Individual/`: Raw input files for the project.  
+**[build/](build/)**
 - `Agglomeration/`: Aggregated datasets by taxonomy level.
-- `Combined/`: Merged and preprocessed datasets.
-**outputs/**
+- `Combined/`: Merged and preprocessed datasets.  
+**[outputs/](outputs/)**
 - `investigation/`: Results from exploratory filtering and testing.
 - `network-comparison/`: Final results from network comparison analyses.
-  - `Combined/`: Results from merged datasets.
-  - `Individual/`: Results from individual datasets.
-- `single-network-analysis/`: Results from analyzing individual datasets.
-**scripts/**
+   - `Combined/`: Results from merged datasets.
+   - `Individual/`: Results from individual datasets.
+- `single-network-analysis/`: Results from analyzing individual datasets.  
+**[scripts/](scripts/)**
 - `network-comparison/`: Scripts to process and compare networks across datasets.
-- `single-network-analysis/`: Scripts to analyze individual datasets.
-**docs/**
+- `single-network-analysis/`: Scripts to analyze individual datasets.  
+**[docs/](docs/)**
 - `meta-analysis/`: Reports and visualizations summarizing the findings.
-- `methodology.md`: Details on data filtering and processing steps.
+- `methodology.md`: Details on data filtering and processing steps.  
 
 ## **Contributing**
 Contributions are welcome! Please:
