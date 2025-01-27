@@ -9,7 +9,6 @@ This repository contains the data, scripts, and results for the **Network Analys
 ```plaintext
 .
 ├── data/                     # Raw input data
-│   └── Individual/           # Original input files
 ├── build/                    # Intermediate processed data
 │   ├── Agglomeration/        # Aggregated data by taxonomy level
 │   └── Combined/             # Preprocessed data for analyses
@@ -21,12 +20,17 @@ This repository contains the data, scripts, and results for the **Network Analys
 │   └── single-network-analysis/ # Outputs for single network analysis
 ├── scripts/                  # Code for analyses
 │   ├── network-comparison/   # Pipeline for network comparison
-│   └── single-network-analysis/  # Pipeline for single-network analysis
+│   ├── single-network-analysis/  # Pipeline for single-network analysis
+│   ├── filtering_investigation.R 
+│   ├── preprocessing.R 
+│   └── README.md
 ├── docs/                     # Documentation and reports
 │   ├── meta-analysis/        # `.Rmd` and `.md` files with plots and analysis
 │   └── methodology.md        # Filtering amd methodology details
 ├── tools/                    # Reusable functions and utilities
-│   └── functions.R
+│   ├── functions.R
+│   ├── analysis_configs.R 
+│   └── combined_variables.R
 ├── LICENSE                   # License file
 └── README.md                 # Project overview
 

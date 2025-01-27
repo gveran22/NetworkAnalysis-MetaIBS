@@ -26,19 +26,34 @@ library(NetCoMi)
 
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.phylobj    <- file.path(path.root, "build/Combined")
+path.phylobj    <- file.path(path.root, "build")
 path.output <- file.path(path.root, "build/Agglomeration")
+path.datasets    <- file.path(path.root, "data")
+
+# Defining taxonomy level for agglomeration
+agg_level <- "Phylum"
 
 # ****************
 # 2. PROCESSING ##
 # ****************
 
-############# 2.1. Read merge phyloseq object ########################################
-physeq.all <- readRDS(file.path(path.phylobj, "physeq_all.rds")) # 2,584 samples 76,218 taxa
-cat("Total Nb of samples:", nsamples(physeq.all))
+############# 2.1. Merge all phyloseq objects #####################################################
+datasets        <- list.files(path.datasets, pattern=".rds")
+phyloseqobjects <- sapply(datasets, function(x) readRDS(file.path(path.phylobj, x)), USE.NAMES=T, simplify=F)
 
-# Defining taxonomy level to merge
-agg_level <- "Phylum"
+# Merge phyloseq objects
+physeq.all <- merge_phyloseq(phyloseqobjects[[1]], phyloseqobjects[[2]]) # Merge first two phyloseq objects in the list
+# if there are more than 2 phyloseq objects, merge the rest of them
+if(length(phyloseqobjects)>2){
+  for (i in 3:length(phyloseqobjects)){
+    print(paste0("merging with phyloseq object #", i))
+    physeq.all <- merge_phyloseq(physeq.all, phyloseqobjects[[i]])
+  }
+}
+
+saveRDS(physeq.all, file.path(path.phylobj, paste0("physeq_all.rds")))
+
+############# 2.2. Agglomeration of  merge phyloseq object ########################################
 
 phyloseq <- tax_glom(physeq.all, taxrank = agg_level, NArm = FALSE)
 
@@ -58,7 +73,9 @@ saveRDS(phyloseq, file.path(path.output, "Combined/all", agg_level,
                             paste0("agglo_all.rds")))
 
 
-############# 2.1.1. Dividing datasets #################################
+############# 2.3. Dividing datasets #############################################
+
+############# 2.3.1. Individual ##################################################
 
 if (!dir.exists(file.path(path.output, "Individual", agg_level))) {
   dir.create(file.path(path.output, "Individual", agg_level), recursive = TRUE)
@@ -137,9 +154,9 @@ saveRDS(physeq, file.path(path.output,  "Individual", agg_level,
                           paste0("agglo_","zhuang",".rds")))
 
 
-############# 2.2. Agglomeration depending on variable region #################################
+############# 2.3.2. Per Variable #################################
 
-###### Separate variable region V4 (agp - mars - nagel -pozuelo - zhu) #####
+###### Variable region: V4 (agp - mars - nagel -pozuelo - zhu) #####
 
 if (!dir.exists(file.path(path.output, "Combined/variable_region", agg_level))) {
   dir.create(file.path(path.output, "Combined/variable_region", agg_level), recursive = TRUE)
@@ -152,7 +169,7 @@ cat("Nb of V4 samples:", nsamples(physeq.v4))
 saveRDS(physeq.v4, file.path(path.output, "Combined/variable_region", agg_level, "agglo_v4.rds"))
 
 
-############# 2.3. Agglomeration depending on sample_type ##########################
+####### Sample type: fecal, sigmoid ##########################
 
 if (!dir.exists(file.path(path.output, "Combined/sample_type", agg_level))) {
   dir.create(file.path(path.output, "Combined/sample_type", agg_level), recursive = TRUE)
@@ -171,7 +188,7 @@ saveRDS(physeq.fecal, file.path(path.output, "Combined/sample_type", agg_level, 
 saveRDS(physeq.sigmoid, file.path(path.output, "Combined/sample_type", agg_level, "agglo_sigmoid.rds"))
 
 
-############# 2.4. Agglomeration depending on sequencing_tech #####################
+###### Sequencing Technology: 454 pyrosequencing, Ion Torrent, Illumina #####################
 
 if (!dir.exists(file.path(path.output, "Combined/sequencing_tech", agg_level))) {
   dir.create(file.path(path.output, "Combined/sequencing_tech", agg_level), recursive = TRUE)
