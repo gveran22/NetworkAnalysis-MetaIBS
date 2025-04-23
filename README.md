@@ -1,23 +1,23 @@
-# Network Inference and Comparative Analysis of Gut Microbiomes in Healthy and IBS-Patients
+# 🧬 Network Inference and Comparative Analysis of Gut Microbiomes in Healthy and IBS-Patients
 
-This repository is an extension of the **MetaIBS project** ([link to project](https://github.com/bio-datascience/MetaIBS)). It contains the data, scripts, and results for the Inference and Network Analysis of the MetaIBs datasets. The study focuses on analyzing microbial networks using taxonomy-level aggregations and comparing network structures divided by the `healthy`status across datasets as well as the merged of the datasets based on some important variables.
+This repository is an extension of the **MetaIBS project** ([link to project](https://github.com/bio-datascience/MetaIBS)). It contains the data, scripts, and results for the inference and network Analysis of the MetaIBs datasets. The study focuses on microbial network inference using taxonomy-level aggregations and compares network structures across `health` statuses (IBS vs. Healthy) within and across datasets.
 
 ---
 
-## **Repository Structure**
+## 📁 Repository Structure
 
 ```plaintext
 .
 ├── data/                     # Raw input data
 ├── build/                    # Intermediate processed data
 │   ├── Agglomeration/        # Aggregated data by taxonomy level
-│   └── ...             
+│   └── Merge/                # Merged datasets
 ├── outputs/                  # Key results and exploratory outputs
 │   ├── investigation/        # Filtering and exploratory results
-│   ├── network-comparison/   # Final network comparison outputs
+│   ├── network-comparison/   # Results of network comparison analysis
 │   │   ├── Combined/
 │   │   └── Individual/
-│   └── single-network-analysis/ # Outputs for single network analysis
+│   └── single-network-analysis/ # Outputs from single network analysis
 ├── scripts/                  # Code for analyses
 │   ├── network-comparison/   # Pipeline for network comparison
 │   ├── single-network-analysis/  # Pipeline for single-network analysis
@@ -25,94 +25,75 @@ This repository is an extension of the **MetaIBS project** ([link to project](ht
 │   ├── preprocessing.R 
 │   └── README.md
 ├── docs/                     # Documentation and reports
-│   ├── meta-analysis/        # `.Rmd` and `.md` files with plots and analysis
+│   ├── meta-analysis/        # `.Rmd` and `.md` files with plots and summaries
 │   └── methodology.md        # Filtering amd methodology details
 ├── tools/                    # Reusable functions and utilities
 │   ├── functions.R
 │   ├── analysis_configs.R 
 │   └── anaylsis_variables.R
-├── LICENSE                   # License file
-└── README.md                 # Project overview
+└── README.md                 # Project overview (this file)
 
 ```
 
 <br/>
 
-## **Installation**
-To replicate the analysis, you will need:
-
-1. R (version >= 4.1.0)
-2. Required R packages:
-  - tidyverse
-  - igraph
-  - vegan
-  - ggplot2
+##⚙️ Installation 
+To replicate the analysis, you will need base R, SpiecEasi and NetComi. See the [SpiecEasi github](https://github.com/zdk123/SpiecEasi) and the [NetComi github](https://github.com/stefpeschel/NetCoMi) pages for more details. This involves a few auxiliary R packeges like: devtools and phyloseq
 
 Clone the repository:  
-`git clone https://github.com/gveran22/NetworkAnalysis-MetaIBS.git  
-cd NetworkAnalysis-MetaIBS`
+`git clone https://github.com/gveran22/NetworkAnalysis-MetaIBS.git`  
+`cd NetworkAnalysis-MetaIBS`
 
 <br/>
 
-## **How to use this repository**
-1. Preprocessing Data
+## 🚀 How to use this repository 
+**1. Preprocess Data**
    - Place your raw input files in the [data/](data/) folder.
-   - Use the preprocessing script in `scripts/` as a reference for preprocessing:
-   everything you need to know is in the [scripts/preprocessing.R](scripts/preprocessing.R).
-   - Save all your preprocessed data in the [build/](build/) folder.
-
-2. Single-Network Analysis
-   - Define your filtering parameters in the [tools/analysis_configs.R](tools/analysis_configs.R) file.  
-   - Run the individual analysis on each dataset using the [scripts/single-network-analysis/](scripts/single-network-analysis/) scripts:   `scripts/single-network-analysis/run_analysis.R`  
-
-3. Network Comparison
-   - Define your variables parameters in the [tools/analysis_variables.R](tools/analysis_variables.R) file.  
-   - Run the network comparison analysis for each dataset, the total merge and the variables you defined in the step before, using the [scripts/network-comparison/](scripts/network-comparison/) scripts:  scripts/network-comparison/run_comparison.R
-
-4. Meta-Analysis
-   - Review the final meta-analysis results in [docs/meta-analysis/](docs/meta-analysis/) adapting the files with your variables.
+   - Use [scripts/preprocessing.R](scripts/preprocessing.R) to preprocess and agglomerate data .
+   - Save your outputs to the [build/](build/) directory.
+   
+**2. Defining filter parameters**
+   - Edit filtering settings in [tools/analysis_configs.R](tools/analysis_configs.R).
+   - If unsure of optimal values, run [scripts/filtering_investigation.R](scripts/filtering_investigation.R) to explore them.
+   
+**3. Single-Network Analysis**
+   - Run the pipeline on each dataset using scripts in [scripts/single-network-analysis/](scripts/single-network-analysis/)   
+      - Entry point: `scripts/single-network-analysis/process.R`
+**4. Network Comparison**
+   - Set anaylsis parameters in [tools/analysis_variables.R](tools/analysis_variables.R).  
+   - Run comparisons across merged and individual datasets using scripts in [scripts/network-comparison/](scripts/network-comparison/) scripts:  scripts/network-comparison/run_comparison.R
+      - Entry point: `scripts/network-comparison/process_comparison.R`
+**5. Meta-Analysis**
+   - Explore and adapt summary plots and insights in [docs/meta-analysis/](docs/meta-analysis/).
 
 <br/>
 
 ## **Folder Details**
 **[data/](data/)**: Raw input files for the project.
 
-**[build/](build/)**
-- `Agglomeration/`: Aggregated datasets by taxonomy level.
-- `Combined/`: Merged and preprocessed datasets.  
+**[build/](build/)** 
+- `Agglomeration/`: Datasets aggregated at various taxonomy levels.
+- `Merge/`: Merge phyloseq dataset.  
 
 **[outputs/](outputs/)**
-- `investigation/`: Results from exploratory filtering and testing.
-- `network-comparison/`: Final results from network comparison analyses.
-   - `Combined/`: Results from merged datasets.
-   - `Individual/`: Results from individual datasets.
-- `single-network-analysis/`: Results from analyzing individual datasets. 
+- `investigation/`: Results from exploratory filtering and testing. 
+- `network-comparison/`: Results of IBS vs. Healthy comparisons.
+   - `Combined/`: Across merged datasets.
+   - `Individual/`: Separate per datasets.
+- `single-network-analysis/`: Results from individual dataset analysis. 
 
 **[scripts/](scripts/)**
-- `network-comparison/`: Scripts to process and compare networks across datasets.
-- `single-network-analysis/`: Scripts to analyze individual datasets.  
+- `network-comparison/`: Scripts to process and compare networks across merged and individual datasets.
+- `single-network-analysis/`: Code for individual dataset analysis.  
 
 **[docs/](docs/)**
-- `meta-analysis/`: Reports and visualizations summarizing the findings.
-- `methodology.md`: Details on data filtering and processing steps.  
+- `meta-analysis/`: Reports and visualizations of findings.
+- `methodology.md`: Filtering strategy and pipeline overview.  
 
 <br/>
 
-## **Contributing**
-Contributions are welcome! Please:
-1. Fork the repository.
-2. Create a feature branch.
-3. Submit a pull request with a detailed description of changes.
-
-<br/>
-
-## **License**
-See the LICENSE file for details.
-
-<br/>
-
-## **Contact**
-For questions or suggestions, contact .
+## 📬 Contact
+For questions or suggestions, contact [Gilary Vera Nunez](mailto:gilary.vera22@gmail.com).
 
 
 
