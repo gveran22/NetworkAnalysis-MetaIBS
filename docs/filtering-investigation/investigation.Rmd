@@ -1,0 +1,147 @@
+---
+title: "Meta analysis - Single Network Analysis (Family)"
+output: 
+  github_document:
+    html_preview: false
+date: "2024-03-01"
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../outputs/investigation/plots/", fig.width = 11, fig.height = 7) 
+```
+
+```{r library-instalation, echo=FALSE}
+myPaths <- .libPaths()
+myPaths <- c(myPaths, "~/MetaIBS/MetaIBS-library")
+myPaths <- c(myPaths[3], myPaths[1], myPaths[2])
+.libPaths(myPaths)  # add new path
+```
+
+***********
+# 1. IMPORT
+***********
+
+## 1.1. Libraries
+
+```{r library-import}
+library(phyloseq) # Handling and analysis of high-throughput microbiome census data.
+library(tidyverse)
+library(ggplot2)
+library(SpiecEasi)
+library(igraph)
+library(VennDiagram)
+library(NetCoMi)
+```
+
+```{r path-directories, echo=FALSE}
+# ROOT DIRECTORY (to modify on your computer)
+path.root <- "~/MetaIBS"
+path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
+path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
+datasets        <- list.files(path.datasets, pattern=".rds")
+datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+path.outputs <- file.path(path.root, "outputs/investigation")
+
+source("~/MetaIBS/tools/functions.R")
+```
+
+**************
+# 2. FUNCTIONS
+**************
+
+```{r function, eval=TRUE, echo=FALSE}
+plotting_filtering <- function(df, df2, tax){
+  
+  df_long <- df %>%
+  dplyr::filter(agg_level == tax) %>%
+  pivot_longer(cols = c(ASVs, ASVs_agglo, ASVs_filtered),
+               names_to = "stage", values_to = "ASV_count") %>%
+  mutate(stage = factor(stage, levels = c("ASVs", "ASVs_agglo", "ASVs_filtered")),
+         params = paste0("numbSamp=", filtTaxPar, "\ntotalReads=", filtSampPar)) 
+
+  df_long2 <- df2 %>%
+  filter(agg_level == tax) %>%
+  pivot_longer(cols = c(ASVs, ASVs_agglo, ASVs_filtered),
+               names_to = "stage", values_to = "ASV_count") %>%
+  mutate(stage = factor(stage, levels = c("ASVs", "ASVs_agglo", "ASVs_filtered")),
+         params = paste0("highestVar=", filtTaxPar, "\ntotalReads=", filtSampPar)) 
+  
+  df_all <- rbind(df_long, df_long2)%>% filter(stage %in% c("ASVs_agglo", "ASVs_filtered"))
+  
+# Gráfico
+ggplot(df_all, aes(x = physeq, y = ASV_count, fill = stage)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = ASV_count), position = position_dodge(width = .9), vjust = -0.5, , size = 2)+
+  facet_wrap(~params, scales = "free_y") +
+  scale_y_continuous(limits = c(0, max(df_all$ASV_count) * 1.15)) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = paste0("ASVs por parámetros de filtrado – Nivel taxonómico: ", tax),
+       x = "Dataset", y = "Número de ASVs", fill = "Etapa")
+}
+
+plotting_filtering_comparison <- function(df, df2, tax){
+  
+  df_long <- df %>%
+  dplyr::filter(agg_level == tax) %>%
+  pivot_longer(cols = c(ASVs_agglo, ASVs_IBS, ASVs_filtered_IBS, ASVs_H, ASVs_filtered_H),
+               names_to = "stage", values_to = "ASV_count") %>%
+  mutate(stage = factor(stage, levels = c("ASVs_agglo", "ASVs_IBS","ASVs_filtered_IBS", 
+                                          "ASVs_H","ASVs_filtered_H")),
+         params = paste0("numbSamp=", filtTaxPar, "\ntotalReads=", filtSampPar)) 
+
+  df_long2 <- df2 %>%
+  filter(agg_level == tax) %>%
+  pivot_longer(cols = c(ASVs_agglo,ASVs_IBS, ASVs_filtered_IBS, ASVs_H, ASVs_filtered_H),
+               names_to = "stage", values_to = "ASV_count") %>%
+  mutate(stage = factor(stage, levels = c("ASVs_agglo", "ASVs_IBS","ASVs_filtered_IBS", 
+                                          "ASVs_H","ASVs_filtered_H")),
+         params = paste0("highestVar=", filtTaxPar, "\ntotalReads=", filtSampPar)) 
+  
+  df_all <- rbind(df_long, df_long2)
+  
+# Gráfico
+ggplot(df_all, aes(x = physeq, y = ASV_count, fill = stage)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = ASV_count), position = position_dodge(width = .9), vjust = -0.5, , size = 2)+
+  facet_wrap(~params, scales = "free_y") +
+  scale_y_continuous(limits = c(0, max(df_all$ASV_count) * 1.15)) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = paste0("ASVs por parámetros de filtrado – Nivel taxonómico: ", tax),
+       x = "Dataset", y = "Número de ASVs", fill = "Etapa")
+}
+
+```
+
+***********************
+# 3. FILTERING-ANALYSIS
+***********************
+
+## 3.1. Single Analysis
+
+```{r single-analysis, fig.show="hold", fig.align="default", echo=FALSE}
+df <- read_csv(file.path(path.outputs, "single_numbSamp_totalReads.csv"))
+df2 <- read_csv(file.path(path.outputs, "single_highestVar_totalReads.csv"))
+
+plotting_filtering(df, df2, "Phylum")
+plotting_filtering(df, df2, "Class")
+plotting_filtering(df, df2, "Order")
+plotting_filtering(df, df2, "Family")
+plotting_filtering(df, df2, "Genus")
+
+```
+
+## 3.2. Network Comparison
+
+```{r comparison-network, fig.show="hold", fig.align="default", echo=FALSE}
+
+df <- read_csv(file.path(path.outputs, "comparison_numbSamp_totalReads.csv"))
+df2 <- read_csv(file.path(path.outputs, "comparison_highestVar_totalReads.csv"))
+
+plotting_filtering_comparison(df, df2, "Phylum")
+plotting_filtering_comparison(df, df2, "Class")
+plotting_filtering_comparison(df, df2, "Order")
+plotting_filtering_comparison(df, df2, "Family")
+plotting_filtering_comparison(df, df2, "Genus")
+```
