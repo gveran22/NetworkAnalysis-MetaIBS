@@ -33,7 +33,7 @@ source("scripts/network-comparison/assoc_mat_comparison.R")
 source("scripts/network-comparison/net_properties_comparison.R")
 source("tools/functions.R")
 source("tools/analysis_configs.R")
-source("tools/anaylsis_variables.R")
+source("tools/analysis_variables.R")
 
 run_analysis <- function(agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar, datasets_names) {
   for (i in seq_along(datasets_names)) {

@@ -28,7 +28,7 @@ library(NetCoMi)
 path.root <- "~/MetaIBS"
 path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
-path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
+path.outputs <- file.path(path.root, "outputs/single-network-analysis")
 path.filt_phy <- file.path(path.outputs , "filtered_otus")
 path.spiec_easi <- file.path(path.outputs , "spiec-easi_results")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")

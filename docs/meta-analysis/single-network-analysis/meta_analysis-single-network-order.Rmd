@@ -7,7 +7,7 @@ date: "2024-03-01"
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../../outputs/single-network-analysis/Individual/plots/Order/") 
+knitr::opts_chunk$set(echo= TRUE, warning = FALSE, message = FALSE, fig.path="../../../outputs/single-network-analysis/plots/Order/") 
 ```
 
 ```{r library-instalation, echo=FALSE}
@@ -36,9 +36,9 @@ library(NetCoMi)
 ```{r path-directories, echo=FALSE}
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree")
-path.phylobj    <- file.path(path.root, "data/Agglomeration/Individual")
-path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
+path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
+path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
+path.outputs <- file.path(path.root, "outputs/single-network-analysis")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.properties <- file.path(path.outputs , "network_properties")
 path.plots <- file.path(path.outputs , "plots")

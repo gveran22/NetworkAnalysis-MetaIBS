@@ -35,7 +35,7 @@ library(NetCoMi)
 ```{r path-directories, echo=FALSE}
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree")
+path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
@@ -216,18 +216,19 @@ result.prop.gl <- plot_network_comparison(prop_H.slr, prop_IBS.slr,
                                thresh = 0.3)
 
 ### Common associations
-net_g <- network_construct_comparison(prop_H.gl, prop_IBS.gl, "proportionality", thresh = 0.3)
+net_g <- network_construct_comparison(prop_H.gl, prop_IBS.gl, "proportionality", thresh = 0)
 asso_H.g <- net_g$input$assoMat1
 asso_IBS.g <- net_g$input$assoMat2
 
 
-net_mb <- network_construct_comparison(prop_H.mb, prop_IBS.mb, "proportionality", thresh = 0.3)
+net_mb <- network_construct_comparison(prop_H.mb, prop_IBS.mb, "proportionality", thresh = 0)
 asso_H.mb <- net_mb$input$assoMat1
 asso_IBS.mb <- net_mb$input$assoMat2
 
-net_slr <- network_construct_comparison(prop_H.slr, prop_IBS.slr, "proportionality", thresh = 0.3)
+net_slr <- network_construct_comparison(prop_H.slr, prop_IBS.slr, "proportionality", thresh = 0)
 asso_H.slr <- net_slr$input$assoMat1
 asso_IBS.slr <- net_slr$input$assoMat2
+
 
 asso_H.g <- ifelse(asso_H.g!=0,1,0)
 asso_IBS.g <- ifelse(asso_IBS.g!=0,1,0)

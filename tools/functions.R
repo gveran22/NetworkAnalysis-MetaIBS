@@ -6,9 +6,9 @@
 # ********************************
 
 
-### Functions for Single Network Analysis
+######## Functions for Single and Comparison Network Analysis  ##################
 
-
+# Getting best slr output
 getOptSLR <- function(x) {
   ind <- x$ebic>1e-1
   x[ind][[which.min(x$ebic[ind])]]
@@ -282,7 +282,7 @@ plot_individual_network <- function(matrix, meta, layout,  datasets_names, metho
   
 }
 
-# Function to process individual plots
+# Function to process individual plots as loop
 plot_individual_networks <- function(matrices, meta, layout, datasets_names, method) {
   for (i in seq_along(matrices)) {
     plot_individual_network(matrices[[i]], meta, layout,  datasets_names[[i]], method)
@@ -332,6 +332,7 @@ plot_individual_network_comparison <- function(matrix_H, matrix_IBS, meta_H, met
   
 }
 
+# Function to process individual plots comparison as loop
 plot_individual_networks_comparison <- function(matrices_H, matrices_IBS, meta_H, meta_IBS, 
                                                 layout, datasets_names, method) {
   for (i in seq_along(matrices_H)) {
@@ -340,6 +341,8 @@ plot_individual_networks_comparison <- function(matrices_H, matrices_IBS, meta_H
   }
 }
 
+
+############# Functions for meta-network ####################
 read_assoc.matrices <- function(agg_level, method){
   # Specify the path to the folder containing CSV files
   order_path <- file.path(path.assoc_mat, agg_level)

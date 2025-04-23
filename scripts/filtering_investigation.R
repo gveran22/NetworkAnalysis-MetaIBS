@@ -29,74 +29,15 @@ path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
-
-# phyloseqobjects <- sapply(datasets, function(x) readRDS(file.path(path.phylobj, x)), USE.NAMES=T, simplify=F)
+path.outputs <- file.path(path.root, "outputs/investigation")
 
 # ****************
 # 2. FILTERING
 # ****************
 
-filtering <- function(physeq_name, agg_level, min_abs_ASVs=0, seq_depth=NA){
-  
-  # Read the phyloseq object
-  physeq <- readRDS(file.path(path.datasets, paste0("physeq_",physeq_name,".rds")))
-  
-  dimensions <- vector("integer")
-  dimensions <- dim(physeq@otu_table)
-  
-  physeq_agglo <- readRDS(file.path(path.phylobj, paste0("agglo_",physeq_name,".rds")))
-  
-  dimensions <- c(dimensions, dim(physeq_agglo@otu_table))
-  
-  # Keeping ASVs present at least in 'min_abs_ASVs' of the samples
-  physeq_agglo <- filter_taxa(phyloseq, function(x) sum(x > 0) > min_abs_ASVs, TRUE)
-  
-  # Removing samples with total sequencing bellow 'seq_depth'
-  if(is.na(seq_depth)){
-    physeq_final <- physeq_agglo
-  }else{
-    physeq_final <- prune_samples(sample_sums(physeq_agglo)>= seq_depth, physeq_agglo)
-  }
-  
-  dimensions <- c(dimensions, dim(physeq_final@otu_table))
-  names(dimensions) <- c("samples", "ASVs", "samples_agglo", "ASVs_agglo",
-                         "samples_filtered", "ASVs_filtered")
-  
-  return(dimensions)
-}
-
-
-all_filtering <- function(physeq, agg_level,min_abs_ASVs, seq_depth){
-  
-  prs <- expand_grid(physeq, agg_level, min_abs_ASVs, seq_depth)
-  
-  dimensions <- vector("integer")
-  dimensions_final <- vector("integer")
-  
-  for (i in 1:nrow(prs)) {
-    dimensions <- filtering(physeq_name = prs$physeq[i],
-                            agg_level = prs$agg_level[i],
-                            min_abs_ASVs = prs$min_abs_ASVs[i],
-                            seq_depth = prs$seq_depth[i])
-    dimensions_final <- rbind(dimensions_final,dimensions, deparse.level = 0)
-    
-  }
-  
-  prs_final <- cbind(prs,dimensions_final)
-  #dimensions_final <- data.frame(dimensions_final)
-  return(prs_final)
-}
-
-simulation <- all_filtering(physeq=datasets_names,
-                            agg_level=c("Class"),
-                            min_abs_ASVs = c(5,10),
-                            seq_depth = c(0,500,750,1000))
-
-write.csv(simulation, "./outputs/investigation/Overall_investigation_tax_samp.csv", 
-          row.names = FALSE)
-
-
-################ Netcomi ##############
+#################################################################
+################### Single Analysis #############################
+#################################################################
 
 filtering_netcomi <- function(physeq_name, agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar){
   
@@ -158,7 +99,7 @@ all_filtering_netcomi <- function(physeq, agg_level, filtTax, filtTaxPar, filtSa
   return(prs_final)
 }
 
-##### Filtering: numbSamp - totalReads
+##### Filtering: numbSamp (5,10) - totalReads (0,500,1000)
 simulation <- all_filtering_netcomi(physeq=datasets_names,
                             agg_level=c("Class","Phylum", "Order","Family", "Genus"),
                             filtTax =  "numbSamp",
@@ -166,12 +107,11 @@ simulation <- all_filtering_netcomi(physeq=datasets_names,
                             filtSamp =   "totalReads",
                             filtSampPar = c(list(totalReads=0),list(totalReads=500),list(totalReads=1000)))
 
-write.csv(simulation, "./outputs/investigation/Overall_investigation_netcomi_numbSamp-totalReads.csv", 
+write.csv(simulation, file.path(path.outputs, "single_numbSamp_totalReads.csv"), 
           row.names = FALSE)
 
 
-##### Filtering: highestVar - totalReads
-
+##### Filtering: highestVar (40,100,150) - totalReads (0,500,1000)
 simulation <- all_filtering_netcomi(physeq=datasets_names,
                                     agg_level=c("Class","Phylum", "Order","Family", "Genus"),
                                     filtTax =  "highestVar",
@@ -179,19 +119,12 @@ simulation <- all_filtering_netcomi(physeq=datasets_names,
                                     filtSamp =   "totalReads",
                                     filtSampPar = c(list(totalReads=0),list(totalReads=500),list(totalReads=1000)))
 
-write.csv(simulation, "./outputs/investigation/Overall_investigation_netcomi_highestVar-totalReads.csv", 
+write.csv(simulation, file.path(path.outputs, "single_highestVar_totalReads.csv"), 
           row.names = FALSE)
 
 #################################################################
 ################### Comparison Networks #########################
 #################################################################
-
-physeq='labus'
-agg_level=c("Order")
-filtTax =  "numbSamp"
-filtTaxPar = c(list(numbSamp=5))
-filtSamp =   "totalReads"
-filtSampPar = c(list(totalReads=500))
 
 filtering_comparison <- function(physeq_name, agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar){
   
@@ -282,8 +215,7 @@ all_filtering_comparison <- function(physeq, agg_level, filtTax, filtTaxPar, fil
   return(prs_final)
 }
 
-
-
+##### Filtering: numbSamp (5,10) - totalReads (0,500)
 simulation <- all_filtering_comparison(physeq=datasets_names,
                                 agg_level=c("Class","Phylum", "Order","Family", "Genus"),
                                 filtTax =  "numbSamp",
@@ -291,11 +223,11 @@ simulation <- all_filtering_comparison(physeq=datasets_names,
                                 filtSamp =   "totalReads",
                                 filtSampPar = c(list(totalReads=0),list(totalReads=500)))
 
-write.csv(simulation, "./outputs/investigation/Overall_investigation_netcomi_comparison_numbSamp-totalReads.csv", 
+write.csv(simulation, file.path(path.outputs, "comparison_numbSamp-totalReads.csv"), 
           row.names = FALSE)
 
 
-
+##### Filtering: highestVar (40,100,150) - totalReads (0,500)
 simulation <- all_filtering_comparison(physeq=datasets_names,
                                     agg_level=c("Class","Phylum", "Order","Family", "Genus"),
                                     filtTax =  "highestVar",
@@ -303,5 +235,5 @@ simulation <- all_filtering_comparison(physeq=datasets_names,
                                     filtSamp =   "totalReads",
                                     filtSampPar = c(list(totalReads=0),list(totalReads=500)))
 
-write.csv(simulation, "./outputs/investigation/Overall_investigation_netcomi_comparison_highestVar-totalReads.csv", 
+write.csv(simulation, file.path(path.outputs, "comparison_highestVar-totalReads.csv"), 
           row.names = FALSE)

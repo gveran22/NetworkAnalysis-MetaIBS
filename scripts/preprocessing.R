@@ -26,9 +26,9 @@ library(NetCoMi)
 
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.phylobj    <- file.path(path.root, "build")
+path.merge    <- file.path(path.root, "build/Merge")
 path.output <- file.path(path.root, "build/Agglomeration")
-path.datasets    <- file.path(path.root, "data")
+path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
 
 # Defining taxonomy level for agglomeration
 agg_level <- "Phylum"
@@ -39,7 +39,7 @@ agg_level <- "Phylum"
 
 ############# 2.1. Merge all phyloseq objects #####################################################
 datasets        <- list.files(path.datasets, pattern=".rds")
-phyloseqobjects <- sapply(datasets, function(x) readRDS(file.path(path.phylobj, x)), USE.NAMES=T, simplify=F)
+phyloseqobjects <- sapply(datasets, function(x) readRDS(file.path(path.datasets, x)), USE.NAMES=T, simplify=F)
 
 # Merge phyloseq objects
 physeq.all <- merge_phyloseq(phyloseqobjects[[1]], phyloseqobjects[[2]]) # Merge first two phyloseq objects in the list
@@ -51,9 +51,10 @@ if(length(phyloseqobjects)>2){
   }
 }
 
-saveRDS(physeq.all, file.path(path.phylobj, paste0("physeq_all.rds")))
+# Saving the total merge 
+saveRDS(physeq.all, file.path(path.merge, paste0("physeq_all.rds")))
 
-############# 2.2. Agglomeration of  merge phyloseq object ########################################
+############# 2.2. Agglomeration of total merge phyloseq object ########################################
 
 phyloseq <- tax_glom(physeq.all, taxrank = agg_level, NArm = FALSE)
 

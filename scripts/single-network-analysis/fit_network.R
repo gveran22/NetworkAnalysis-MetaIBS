@@ -22,7 +22,7 @@ fit_network <- function(physeq_name, agg_level){
                       lambda.min.ratio=1e-3, #lambda.log=FALSE,
                       pulsar.select=TRUE, pulsar.params=pargs)
   
-  ranks <- rank.slr(physeq_filt)
+  ranks <- rank.slr(physeq_filt) # function in tools/functions.R
   
   se.slr <- spiec.easi(physeq_filt , method='slr', nlambda=100,
                        lambda.min.ratio=1e-3, r=ranks, 

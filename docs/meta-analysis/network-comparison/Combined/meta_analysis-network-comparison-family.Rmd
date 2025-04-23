@@ -35,11 +35,11 @@ library(NetCoMi)
 ```{r path-directories, echo=FALSE}
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "build/Combined")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Combined")
 
 source("~/MetaIBS/tools/functions.R")
+source("~/MetaIBS/tools/analysis_variables.R")
 agg_level <- "Family"
 ```
 
@@ -145,14 +145,11 @@ plot_individual_networks_comparison <- function(matrices_H, matrices_IBS, meta_H
 
 ```{r total-merge, fig.width=30, fig.height=13, echo=FALSE}
 path.all<- file.path(path.outputs, "all")
-path.datasets.all    <- file.path(path.datasets, "all")
 path.assoc_mat <- file.path(path.all , "association_matrices")
 path.phylobj_sep <- file.path(path.all , "phyloseq_IBS")
 path.properties <- file.path(path.all , "network_properties")
 path.plots <- file.path(path.all , "plots")
-
-datasets        <- list.files(path.datasets.all, pattern=".rds")
-datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+datasets_names  <- analysis_variables$all
 
 
 asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)[[1]]
@@ -204,82 +201,77 @@ plot_network_comparison(common_mat_H, common_mat_IBS,
 
 ```{r sample-type, fig.width=30, fig.height=13, echo=FALSE}
 
-#path.samp <- file.path(path.outputs, "sample_type")
-#path.datasets.samp    <- file.path(path.datasets, "sample_type")
-#path.assoc_mat <- file.path(path.samp , "association_matrices")
-#path.phylobj_sep <- file.path(path.samp , "phyloseq_IBS")
-#path.properties <- file.path(path.samp , "network_properties")
-#path.plots <- file.path(path.samp , "plots")
+path.samp <- file.path(path.outputs, "sample_type")
+path.assoc_mat <- file.path(path.samp , "association_matrices")
+path.phylobj_sep <- file.path(path.samp , "phyloseq_IBS")
+path.properties <- file.path(path.samp , "network_properties")
+path.plots <- file.path(path.samp , "plots")
 
-#datasets        <- list.files(path.datasets.samp, pattern=".rds")
-#datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+datasets_names  <- datasets_names  <- analysis_variables$sample_type
 
 
-#asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
-#asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)
-#asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
-#asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)
-#asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
-#asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)
+asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
+asso_IBS.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 4)
+asso_H.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
+asso_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)
+asso_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
+asso_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)
 
-#for (i in 1:length(datasets_names)) {
-  
-#result.gl <- plot_network_comparison(asso_H.gl[[i]], asso_IBS.gl[[i]], 
-#                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy GLasso"), 
-#                                                          paste0(datasets_names[[i]]," Network IBS GLasso")), thresh = 0,
-#                                           repulsion = 0.50008)
-#result.mb <- plot_network_comparison(asso_H.mb[[i]], asso_IBS.mb[[i]], 
-#                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy MB"), 
-#                                                          paste0(datasets_names[[i]]," Network IBS MB")), thresh = 0,
-#                                           repulsion = 0.50008)
-#result.slr <- plot_network_comparison(asso_H.slr[[i]], asso_IBS.slr[[i]], 
-#                                      groupNames = c(paste0(datasets_names[[i]]," Network Healthy SLR"), 
-#                                                          paste0(datasets_names[[i]]," Network IBS SLR")), thresh = 0,
-#                                           repulsion = 0.50008)
-#}
+for (i in 1:length(datasets_names)) {
+
+result.gl <- plot_network_comparison(asso_H.gl[[i]], asso_IBS.gl[[i]],
+                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy GLasso"),
+                                                          paste0(datasets_names[[i]]," Network IBS GLasso")), thresh = 0,
+                                           repulsion = 0.50008)
+result.mb <- plot_network_comparison(asso_H.mb[[i]], asso_IBS.mb[[i]],
+                                     groupNames = c(paste0(datasets_names[[i]]," Network Healthy MB"),
+                                                          paste0(datasets_names[[i]]," Network IBS MB")), thresh = 0,
+                                           repulsion = 0.50008)
+result.slr <- plot_network_comparison(asso_H.slr[[i]], asso_IBS.slr[[i]],
+                                      groupNames = c(paste0(datasets_names[[i]]," Network Healthy SLR"),
+                                                          paste0(datasets_names[[i]]," Network IBS SLR")), thresh = 0,
+                                           repulsion = 0.50008)
+}
 
 
-### Common associations
-#for (i in 1:length(datasets_names)) {
-#  asso_H.g<- ifelse((asso_H.gl[[i]])!=0,1,0)
-#  asso_IBS.g <- ifelse(asso_IBS.gl[[i]]!=0,1,0)
-#  asso_H.m <- ifelse(asso_H.mb[[i]]!=0,1,0)
-#  asso_IBS.m <- ifelse(asso_IBS.mb[[i]]!=0,1,0)
-#  asso_H.sl <- ifelse(asso_H.slr[[i]]!=0,1,0)
-#  asso_IBS.sl <- ifelse(asso_IBS.slr[[i]]!=0,1,0)
-  
-#  common_mat_H <- asso_H.g*asso_H.m*asso_H.sl
-#  common_mat_IBS <- asso_IBS.g*asso_IBS.m*asso_IBS.sl
-  
-#  tryCatch({
-#  common.plot <- plot_network_comparison(common_mat_H, common_mat_IBS, 
-#                                        groupNames = c(paste0("Common associations Healthy - ", datasets_names[[i]]), 
-#                                                            paste0("Common associations IBS - ", datasets_names[[i]])),
-#                                        dataType ="proportionality", thresh = 0)
-#  }, error = function(e) {
-#  # Custom message when the error occurs
-#  if (grepl("There are no connected nodes in both networks", e$message)) {
-#    print("No common associations")
-#  } else {
-#    # Re-throw the error if it's a different issue
-#    stop(e)
-#  }
-#})
-#}
+## Common associations between the three methods 
+for (i in 1:length(datasets_names)) {
+  asso_H.g<- ifelse((asso_H.gl[[i]])!=0,1,0)
+  asso_IBS.g <- ifelse(asso_IBS.gl[[i]]!=0,1,0)
+  asso_H.m <- ifelse(asso_H.mb[[i]]!=0,1,0)
+  asso_IBS.m <- ifelse(asso_IBS.mb[[i]]!=0,1,0)
+  asso_H.sl <- ifelse(asso_H.slr[[i]]!=0,1,0)
+  asso_IBS.sl <- ifelse(asso_IBS.slr[[i]]!=0,1,0)
+
+  common_mat_H <- asso_H.g*asso_H.m*asso_H.sl
+  common_mat_IBS <- asso_IBS.g*asso_IBS.m*asso_IBS.sl
+
+  tryCatch({
+  common.plot <- plot_network_comparison(common_mat_H, common_mat_IBS,
+                                        groupNames = c(paste0("Common associations Healthy - ", datasets_names[[i]]),
+                                                            paste0("Common associations IBS - ", datasets_names[[i]])),
+                                        dataType ="proportionality", thresh = 0)
+  }, error = function(e) {
+  # Custom message when the error occurs
+  if (grepl("There are no connected nodes in both networks", e$message)) {
+    print("No common associations")
+  } else {
+    # Re-throw the error if it's a different issue
+    stop(e)
+  }
+})
+}
 ```
 
 ## 3.3. Sequencing Technology
 
 ```{r seq-tech, fig.width=30, fig.height=13, echo=FALSE}
 path.seq <- file.path(path.outputs, "sequencing_tech")
-path.datasets.seq    <- file.path(path.datasets, "sequencing_tech")
 path.assoc_mat <- file.path(path.seq , "association_matrices")
 path.phylobj_sep <- file.path(path.seq , "phyloseq_IBS")
 path.properties <- file.path(path.seq , "network_properties")
 path.plots <- file.path(path.seq , "plots")
-
-datasets        <- list.files(path.datasets.seq, pattern=".rds")
-datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+datasets_names  <- datasets_names  <- analysis_variables$sequencing_tech
 
 
 asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
@@ -307,7 +299,7 @@ result.slr <- plot_network_comparison(asso_H.slr[[i]], asso_IBS.slr[[i]],
 }
 
 
-### Common associations
+### Common associations between the three methods 
 for (i in 1:length(datasets_names)) {
   asso_H.g<- ifelse((asso_H.gl[[i]])!=0,1,0)
   asso_IBS.g <- ifelse(asso_IBS.gl[[i]]!=0,1,0)
@@ -340,14 +332,11 @@ for (i in 1:length(datasets_names)) {
 
 ```{r var-reg, fig.width=30, fig.height=13, echo=FALSE}
 path.var <- file.path(path.outputs, "variable_region")
-path.datasets.var    <- file.path(path.datasets, "variable_region")
 path.assoc_mat <- file.path(path.var , "association_matrices")
 path.phylobj_sep <- file.path(path.var , "phyloseq_IBS")
 path.properties <- file.path(path.var , "network_properties")
 path.plots <- file.path(path.var , "plots")
-
-datasets        <- list.files(path.datasets.var, pattern=".rds")
-datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)
+datasets_names  <- datasets_names  <- analysis_variables$variable_region
 
 
 asso_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
@@ -375,7 +364,7 @@ result.slr <- plot_network_comparison(asso_H.slr[[i]], asso_IBS.slr[[i]],
 }
 
 
-### Common associations
+### Common associations between the three methods 
 for (i in 1:length(datasets_names)) {
   asso_H.g<- ifelse((asso_H.gl[[i]])!=0,1,0)
   asso_IBS.g <- ifelse(asso_IBS.gl[[i]]!=0,1,0)
