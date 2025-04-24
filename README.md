@@ -27,7 +27,7 @@ This repository is an extension of the **MetaIBS project** ([link to project](ht
 ├── docs/                     # Documentation and reports
 │   ├── meta-analysis/        # `.Rmd` and `.md` files with plots and summaries
 │   └── methodology.md        # Filtering amd methodology details
-├── tools/                    # Reusable functions and utilities
+├── tools/                    # Reusable functions and configs
 │   ├── functions.R
 │   ├── analysis_configs.R 
 │   └── anaylsis_variables.R
@@ -110,6 +110,11 @@ Contains raw input data such as phyloseq objects.
 - `meta-analysis/`: Final reports and visualizations.
 - `methodology.md`: Filtering strategy and pipeline overview.
 
+### [`tools/`](tools/)
+- `functions.R`: Reusable functions for the pipeline and meta-analysis.
+- `analysis_configs.R`: Filtering parameters for phyloseq objects.
+- `analysis_variables.R`: Variables for network comparison setup.
+
 <br/>
 
 ## 📬 Contact
@@ -118,6 +123,3 @@ For questions, feedback, or contributions, please reach out to:
 
 **Gilary Vera Nuñez**  
 📧 [gilary.vera22@gmail.com](mailto:gilary.vera22@gmail.com)
-
-
-
