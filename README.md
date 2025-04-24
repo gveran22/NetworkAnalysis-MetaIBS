@@ -37,64 +37,87 @@ This repository is an extension of the **MetaIBS project** ([link to project](ht
 
 <br/>
 
-##⚙️ Installation 
-To replicate the analysis, you will need base R, SpiecEasi and NetComi. See the [SpiecEasi github](https://github.com/zdk123/SpiecEasi) and the [NetComi github](https://github.com/stefpeschel/NetCoMi) pages for more details. This involves a few auxiliary R packeges like: devtools and phyloseq
+## ⚙️ Installation
+To replicate the analysis, you will need **R**, along with the packages **SpiecEasi** and **NetCoMi**. For installation and details, refer to their GitHub repositories:
 
-Clone the repository:  
+- [SpiecEasi GitHub](https://github.com/zdk123/SpiecEasi)
+- [NetCoMi GitHub](https://github.com/stefpeschel/NetCoMi)
+
+
+These packages depend on additional tools such as `devtools`, `phyloseq`, and others, which can be installed from CRAN or GitHub.
+
+To clone this repository:  
+
 `git clone https://github.com/gveran22/NetworkAnalysis-MetaIBS.git`  
 `cd NetworkAnalysis-MetaIBS`
 
 <br/>
 
-## 🚀 How to use this repository 
-**1. Preprocess Data**
-   - Place your raw input files in the [data/](data/) folder.
-   - Use [scripts/preprocessing.R](scripts/preprocessing.R) to preprocess and agglomerate data .
-   - Save your outputs to the [build/](build/) directory.
+## 🚀 How to Use
+
+### 1. **Preprocess Data**
+- Place your raw input files in the [`data/`](data/) folder.
+- Use [`scripts/preprocessing.R`](scripts/preprocessing.R) to:
+  - Merge datasets.
+  - Aggregate by taxonomy level.
+  - Split agglomerated data.
+- Save the resulting files in the [`build/`](build/) directory.
    
-**2. Defining filter parameters**
-   - Edit filtering settings in [tools/analysis_configs.R](tools/analysis_configs.R).
-   - If unsure of optimal values, run [scripts/filtering_investigation.R](scripts/filtering_investigation.R) to explore them.
+### 2. **Define Filtering Parameters**
+- Set your filtering thresholds and options in [`tools/analysis_configs.R`](tools/analysis_configs.R).
+- If you're unsure of the best parameters, run the exploratory script [`scripts/filtering_investigation.R`](scripts/filtering_investigation.R) to test different configurations.
    
-**3. Single-Network Analysis**
-   - Run the pipeline on each dataset using scripts in [scripts/single-network-analysis/](scripts/single-network-analysis/)   
-      - Entry point: `scripts/single-network-analysis/process.R`
-**4. Network Comparison**
-   - Set anaylsis parameters in [tools/analysis_variables.R](tools/analysis_variables.R).  
-   - Run comparisons across merged and individual datasets using scripts in [scripts/network-comparison/](scripts/network-comparison/) scripts:  scripts/network-comparison/run_comparison.R
-      - Entry point: `scripts/network-comparison/process_comparison.R`
-**5. Meta-Analysis**
-   - Explore and adapt summary plots and insights in [docs/meta-analysis/](docs/meta-analysis/).
+### 3. **Single-Network Analysis**
+- Analyze each dataset individually using the scripts in [`scripts/single-network-analysis/`](scripts/single-network-analysis/).
+- Execute the full pipeline with `process_analysis.R`.
+      
+### 4. **Network Comparison**
+- Set comparison variables in [`tools/analysis_variables.R`](tools/analysis_variables.R).
+- Run the comparative analysis using the scripts in [`scripts/network-comparison/`](scripts/network-comparison/), particularly `process_comparison.R`.
+- This includes comparisons of IBS vs Healthy across datasets or merged data according the comparison variables.
+      
+### 5. **Meta-Analysis and Visualization**
+- Review the meta-analysis outputs in [`docs/meta-analysis/`](docs/meta-analysis/).
+- Customize `.Rmd` reports with your results and variable definitions for final reporting and publication-ready visualizations.
+
 
 <br/>
 
-## **Folder Details**
-**[data/](data/)**: Raw input files for the project.
+## 📂 Folder Details
 
-**[build/](build/)** 
-- `Agglomeration/`: Datasets aggregated at various taxonomy levels.
-- `Merge/`: Merge phyloseq dataset.  
+### [`data/`](data/)
+Contains raw input data such as phyloseq objects.
 
-**[outputs/](outputs/)**
-- `investigation/`: Results from exploratory filtering and testing. 
-- `network-comparison/`: Results of IBS vs. Healthy comparisons.
-   - `Combined/`: Across merged datasets.
-   - `Individual/`: Separate per datasets.
-- `single-network-analysis/`: Results from individual dataset analysis. 
+### [`build/`](build/)
+- `Agglomeration/`: Taxonomy-level aggregated phyloseq data.
+- `Merge/`: Combined data from all datasets.
 
-**[scripts/](scripts/)**
-- `network-comparison/`: Scripts to process and compare networks across merged and individual datasets.
-- `single-network-analysis/`: Code for individual dataset analysis.  
 
-**[docs/](docs/)**
-- `meta-analysis/`: Reports and visualizations of findings.
-- `methodology.md`: Filtering strategy and pipeline overview.  
+### [`outputs/`](outputs/)
+- `investigation/`: Results from filtering exploration.
+- `network-comparison/`: Network comparison results.
+  - `Combined/`: Merged dataset results.
+  - `Individual/`: Dataset-specific results.
+- `single-network-analysis/`: Outputs from individual network inference pipelines.
+
+### [`scripts/`](scripts/)
+- `network-comparison/`: All scripts for comparative network inference.
+- `single-network-analysis/`: Scripts for analyzing each dataset independently.
+- `filtering_investigation.R`: Explore optimal filtering strategies.
+- `preprocessing.R`: Handles merging, agglomeration, and splitting of datasets.
+
+### [`docs/`](docs/)
+- `meta-analysis/`: Final reports and visualizations.
+- `methodology.md`: Filtering strategy and pipeline overview.
 
 <br/>
 
 ## 📬 Contact
-For questions or suggestions, contact [Gilary Vera Nunez](mailto:gilary.vera22@gmail.com).
 
+For questions, feedback, or contributions, please reach out to:
+
+**Gilary Vera Nuñez**  
+📧 [gilary.vera22@gmail.com](mailto:gilary.vera22@gmail.com)
 
 
 
