@@ -1,113 +1,124 @@
-# Methodology
+# 📘 Methodology
 
-This document outlines the methodologies used for preprocessing, analyzing, and comparing microbial networks in the **Network Analysis - MetaIBS** project.
-
----
-
-## **1. Data Preprocessing**
-
-### 1.1 Raw Data Structure
-- Raw input data is stored in the `data/Individual/` folder.
-- Each dataset contains:
-  - Taxonomic abundance tables.
-  - Metadata associated with experimental conditions.
-
-### 1.2 Preprocessing Steps
-1. **Normalization:**
-   - Abundance values are normalized using relative abundance.
-   - Scripts: `scripts/single-network-analysis/preprocessing.R`
-2. **Filtering:**
-   - Operational Taxonomic Units (OTUs) with low prevalence (<5% occurrence across samples) are removed.
-   - OTUs with zero variance are excluded.
-3. **Agglomeration:**
-   - Taxonomic levels aggregated into Class, Family, Order, etc., using custom functions in `tools/functions.R`.
-
-Outputs:
-- Preprocessed datasets are stored in `build/Agglomeration/`.
+This document outlines the methodology for preprocessing, analyzing, and comparing microbial networks in the **NetworkAnalysis-MetaIBS** project.
 
 ---
 
-## **2. Network Analysis**
+## 1. 🧹 Data Preprocessing
 
-### 2.1 Single-Network Analysis
-- Individual datasets are analyzed to construct microbial association networks.
-- Methodology:
-  - Correlation-based network construction (e.g., Spearman correlation).
-  - Thresholding based on correlation strength (e.g., |r| > 0.6).
-  - Network metrics calculated: Degree, Betweenness Centrality, Clustering Coefficient.
-- Outputs:
-  - Association matrices: `outputs/single-network-analysis/Individual/association_matrices/`
-  - Filtered networks: `outputs/single-network-analysis/Individual/filtered_outputs/`
-  - Final plots: `outputs/single-network-analysis/Individual/final_plots/`
+### Structure
+- Raw data is stored in the `data/` folder. Each file contains a `phyloseq` object for one study (ASV table + metadata).
+- For dataset origins, refer to the [MetaIBS project](https://github.com/bio-datascience/MetaIBS).
 
-Scripts:
+### Steps
+
+1. **Merge**
+   - All study-specific datasets are merged into a single `phyloseq` object.
+
+2. **Agglomeration**
+   - The merged dataset is agglomerated at various taxonomy levels (e.g., Class, Family, Order).
+   - Missing taxonomy labels are cleaned and renamed during this step.
+
+3. **Splitting Agglomerated Data**
+   - The agglomerated dataset is split into subsets for downstream analysis:
+     - **a. Individual datasets:** Split by study (`author` variable).
+     - **b. Combined datasets:** Split by selected comparison variables (e.g., `sample_type`, `sequencing_tech`, etc.).
+
+   These outputs serve as input for both the single-network and comparison-network inference pipelines.
+
+🧾 Script:  
+- `scripts/preprocessing.R`
+
+📂 Outputs:  
+- Saved in `build/Merge/` and `build/Agglomeration/`
+
+---
+
+## 2. 🔍 Filtering Exploration
+
+- Various filter combination were tested and visualized to identify the most consistent approach across all study-specific datasets.
+- Bar plots were used to evaluate outcomes.
+
+📂 Outputs:  
+- `outputs/investigation/`
+- `outputs/filtering-investigation/`
+
+🧾 Script:  
+- `scripts/filtering_investigation.R`
+
+---
+
+## 3. 🧠 Network Inference
+
+### 3.1 Single-Network Analysis
+- Microbial networks are inferred separately for each dataset.
+- Methods: SpiecEasi using three approaches: `glasso`, `mb` and `slr`.
+- Metrics: Relative LCC size, clustering coefficient, modularity, and more.
+
+📂 Outputs:  
+- `outputs/single-network-analysis/` — includes association matrices, SpiecEasi results, plots, and network metrics
+
+🧾 Script:  
 - `scripts/single-network-analysis/run_analysis.R`
 
----
+### 3.2 Network Comparison
+- Preprocessing: The split agglomerated datasets are split into IBS and Healthy samples.
+- Comparative networks are inferred for each individual dataset study and combined dataset.
+- Methods: SpiecEasi with `glasso`, `mb` and `slr`.
+- Metrics: Relative LCC size, clustering coefficient, modularity, etc.
+  
+📂 Outputs:  
+- `outputs/network-comparison/Combined/`  
+- `outputs/network-comparison/Individual/`
 
-### 2.2 Network Comparison
-- Comparison of networks constructed from combined datasets or across conditions.
-- Methodology:
-  - Pairwise comparison of network metrics (e.g., average degree, modularity).
-  - Statistical significance tested using permutation tests.
-- Outputs:
-  - Combined and individual results: `outputs/network-comparison/`
-  - Final plots: `outputs/network-comparison/final_plots/`
-
-Scripts:
+🧾 Script:  
 - `scripts/network-comparison/run_comparison.R`
 
 ---
 
-## **3. Filtering and Exploration**
+## 4. 📊 Meta-Analysis
 
-### 3.1 Investigation of Filtering
-- Exploratory filtering methods were applied to test their impact on OTU tables.
-- Methodology:
-  - Comparison of retained OTUs across different filtering thresholds.
-  - Visualization of filtering effects using diversity metrics.
-- Outputs:
-  - Exploratory results: `outputs/investigation/`
+- Aggregates and summarizes network results.
+- Visual outputs include network plots.
 
-Scripts:
-- `scripts/filter_exploration.R`
+📂 Reports:  
+- Located in `docs/meta-analysis/`
+
+🧾 Source Files:  
+- Includes `.Rmd` and `.md` reports
 
 ---
 
-## **4. Meta-Analysis**
+## 5. 🧰 Tools
 
-- Summary reports and visualizations of final results.
-- Methodology:
-  - Aggregation of network metrics across datasets.
-  - Comparison across experimental conditions using visualizations (e.g., heatmaps, barplots).
-- Reports:
-  - Located in `docs/meta-analysis/`
-  - Includes `.Rmd` and `.md` files for reproducibility.
-
----
-
-## **5. Tools and Utilities**
-
-### 5.1 Functions
-- Custom R functions for preprocessing and network analysis.
-- Key files:
+### Functions
+- Custom functions used across the analysis are stored in:
   - `tools/functions.R`
 
-### 5.2 Libraries Used
-- `tidyverse`: Data manipulation and visualization.
-- `igraph`: Network construction and metrics calculation.
-- `vegan`: Diversity analysis.
-- `ggplot2`: Plotting results.
+### Configuration
+- Filtering parameters: `tools/analysis_configs.R`  
+- Grouping and comparison variables: `tools/analysis_variables.R`
 
 ---
 
-## **References**
+## 📚 Packages Used
 
-1. **Network Construction Methodology:** Barabási, A.-L. (2016). *Network Science*. Cambridge University Press.
-2. **Microbial Network Analysis:** Faust, K., & Raes, J. (2012). Microbial interactions: From networks to models. *Nature Reviews Microbiology*.
+- `tidyverse` – data wrangling & plotting  
+- `SpiecEasi` – network inference  
+- `igraph`, `NetCoMi` – network metrics & visualization  
+- `phyloseq`, `vegan` – ecological analyses
 
 ---
 
-## **Contact**
+## 📖 References
 
-For additional details or questions, contact [Your Name](mailto:youremail@example.com).
+1. Zachary D. Kurtz, Richard Bonneau, Christian L. Müller (2019). *Disentangling microbial associations from hidden environmental and technical factors via latent graphical models*. bioRxiv. [https://www.biorxiv.org/content/10.1101/2019.12.21.885889v1](https://www.biorxiv.org/content/10.1101/2019.12.21.885889v1)
+2. Zachary D. Kurtz et al. (2015). *Sparse and compositionally robust inference of microbial ecological networks*. arXiv. [https://arxiv.org/abs/1408.4158](https://arxiv.org/abs/1408.4158)
+3. Salomé Carcy et al. (2024). *MetaIBS - large-scale amplicon-based meta-analysis of irritable bowel syndrome*. bioRxiv. [https://www.biorxiv.org/content/10.1101/2024.01.22.575775v1](https://www.biorxiv.org/content/10.1101/2024.01.22.575775v1)
+
+---
+
+
+## 📬 Contact
+
+For questions or contributions: [Gilary Vera Nunez](mailto:gilary.vera22@gmail.com)

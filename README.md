@@ -1,6 +1,6 @@
 # 🧬 Network Inference and Comparative Analysis of Gut Microbiomes in Healthy and IBS-Patients
 
-This repository is an extension of the **MetaIBS project** ([link to project](https://github.com/bio-datascience/MetaIBS)). It contains the data, scripts, and results for the inference and network Analysis of the MetaIBs datasets. The study focuses on microbial network inference using taxonomy-level aggregations and compares network structures across `health` statuses (IBS vs. Healthy) within and across datasets.
+This repository is an extension of the **MetaIBS project** ([link to project](https://github.com/bio-datascience/MetaIBS)). It contains the data, scripts, and results for the inference and network analysis of the MetaIBs datasets. The study focuses on microbial network inference using taxonomy-level aggregations and compares network structures across `health` statuses (IBS vs. Healthy) within and across datasets.
 
 ---
 
@@ -8,30 +8,31 @@ This repository is an extension of the **MetaIBS project** ([link to project](ht
 
 ```plaintext
 .
-├── data/                     # Raw input data
-├── build/                    # Intermediate processed data
-│   ├── Agglomeration/        # Aggregated data by taxonomy level
-│   └── Merge/                # Merged datasets
-├── outputs/                  # Key results and exploratory outputs
-│   ├── investigation/        # Filtering and exploratory results
-│   ├── network-comparison/   # Results of network comparison analysis
+├── data/                             # Raw input data
+├── build/                            # Intermediate processed data
+│   ├── Agglomeration/                # Aggregated data by taxonomy level
+│   └── Merge/                        # Merged datasets
+├── outputs/                          # Key results and exploratory outputs
+│   ├── investigation/                # Filtering and exploratory results
+│   ├── network-comparison/           # Results of network comparison analysis
 │   │   ├── Combined/
 │   │   └── Individual/
-│   └── single-network-analysis/ # Outputs from single network analysis
-├── scripts/                  # Code for analyses
-│   ├── network-comparison/   # Pipeline for network comparison
-│   ├── single-network-analysis/  # Pipeline for single-network analysis
+│   └── single-network-analysis/      # Outputs from single network analysis
+├── scripts/                          # Code for analyses
+│   ├── network-comparison/           # Pipeline for network comparison
+│   ├── single-network-analysis/      # Pipeline for single-network analysis
 │   ├── filtering_investigation.R 
 │   ├── preprocessing.R 
 │   └── README.md
-├── docs/                     # Documentation and reports
-│   ├── meta-analysis/        # `.Rmd` and `.md` files with plots and summaries
-│   └── methodology.md        # Filtering amd methodology details
-├── tools/                    # Reusable functions and configs
+├── docs/                             # Documentation and reports
+│   ├── filtering-investigation/      # `.Rmd` and `.md` files with plots 
+│   ├── meta-analysis/                # `.Rmd` and `.md` files with plots and summaries
+│   └── methodology.md                # Filtering and methodology details
+├── tools/                            # Reusable functions and configs
 │   ├── functions.R
 │   ├── analysis_configs.R 
-│   └── anaylsis_variables.R
-└── README.md                 # Project overview (this file)
+│   └── analysis_variables.R
+└── README.md                         # Project overview (this file)
 
 ```
 
@@ -44,7 +45,7 @@ To replicate the analysis, you will need **R**, along with the packages **SpiecE
 - [NetCoMi GitHub](https://github.com/stefpeschel/NetCoMi)
 
 
-These packages depend on additional tools such as `devtools`, `phyloseq`, and others, which can be installed from CRAN or GitHub.
+These packages require additional dependencies such as `devtools`, `phyloseq`, and others, available via CRAN or GitHub.
 
 To clone this repository:  
 
@@ -69,16 +70,16 @@ To clone this repository:
    
 ### 3. **Single-Network Analysis**
 - Analyze each dataset individually using the scripts in [`scripts/single-network-analysis/`](scripts/single-network-analysis/).
-- Execute the full pipeline with `process_analysis.R`.
+- Execute the full pipeline with `run_analysis.R`.
       
 ### 4. **Network Comparison**
 - Set comparison variables in [`tools/analysis_variables.R`](tools/analysis_variables.R).
-- Run the comparative analysis using the scripts in [`scripts/network-comparison/`](scripts/network-comparison/), particularly `process_comparison.R`.
-- This includes comparisons of IBS vs Healthy across datasets or merged data according the comparison variables.
+- Run the comparative analysis using the scripts in [`scripts/network-comparison/`](scripts/network-comparison/), particularly `run_comparison.R`.
+- This includes IBS vs Healthy comparisons across individual and combined datasets, based on the defined comparison variables.
       
 ### 5. **Meta-Analysis and Visualization**
 - Review the meta-analysis outputs in [`docs/meta-analysis/`](docs/meta-analysis/).
-- Customize `.Rmd` reports with your results and variable definitions for final reporting and publication-ready visualizations.
+- Customize `.Rmd` reports to integrate your results and variables, generating publication-ready visualizations and summaries.
 
 
 <br/>
@@ -107,8 +108,9 @@ Contains raw input data such as phyloseq objects.
 - `preprocessing.R`: Handles merging, agglomeration, and splitting of datasets.
 
 ### [`docs/`](docs/)
+- `filtering-investigation/`: Visualizations of filtering analysis.
 - `meta-analysis/`: Final reports and visualizations.
-- `methodology.md`: Filtering strategy and pipeline overview.
+- `methodology.md`: Pipeline overview.
 
 ### [`tools/`](tools/)
 - `functions.R`: Reusable functions for the pipeline and meta-analysis.
