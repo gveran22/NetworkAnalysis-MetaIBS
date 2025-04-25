@@ -121,4 +121,4 @@ This document outlines the methodology for preprocessing, analyzing, and compari
 
 ## 📬 Contact
 
-For questions or contributions: [Gilary Vera Nunez](mailto:gilary.vera22@gmail.com)
+For questions or contributions: [Gilary Vera Nuñez](mailto:gilary.vera22@gmail.com)
