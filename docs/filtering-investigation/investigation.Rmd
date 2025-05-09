@@ -84,17 +84,17 @@ plotting_filtering_comparison <- function(df, df2, tax){
   
   df_long <- df %>%
   dplyr::filter(agg_level == tax) %>%
-  pivot_longer(cols = c(ASVs_agglo, ASVs_IBS, ASVs_filtered_IBS, ASVs_H, ASVs_filtered_H),
+  pivot_longer(cols = c( ASVs_IBS, ASVs_filtered_IBS, ASVs_H, ASVs_filtered_H), #ASVs_agglo,
                names_to = "stage", values_to = "ASV_count") %>%
-  mutate(stage = factor(stage, levels = c("ASVs_agglo", "ASVs_IBS","ASVs_filtered_IBS", 
+  mutate(stage = factor(stage, levels = c( "ASVs_IBS","ASVs_filtered_IBS", #"ASVs_agglo",
                                           "ASVs_H","ASVs_filtered_H")),
          params = paste0("numbSamp=", filtTaxPar, "\ntotalReads=", filtSampPar)) 
 
   df_long2 <- df2 %>%
   filter(agg_level == tax) %>%
-  pivot_longer(cols = c(ASVs_agglo,ASVs_IBS, ASVs_filtered_IBS, ASVs_H, ASVs_filtered_H),
+  pivot_longer(cols = c(ASVs_IBS, ASVs_filtered_IBS, ASVs_H, ASVs_filtered_H), #ASVs_agglo,
                names_to = "stage", values_to = "ASV_count") %>%
-  mutate(stage = factor(stage, levels = c("ASVs_agglo", "ASVs_IBS","ASVs_filtered_IBS", 
+  mutate(stage = factor(stage, levels = c( "ASVs_IBS","ASVs_filtered_IBS", #"ASVs_agglo",
                                           "ASVs_H","ASVs_filtered_H")),
          params = paste0("highestVar=", filtTaxPar, "\ntotalReads=", filtSampPar)) 
   
