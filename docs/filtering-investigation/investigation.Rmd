@@ -101,15 +101,26 @@ plotting_filtering_comparison <- function(df, df2, tax){
   df_all <- rbind(df_long, df_long2)
   
 # Gráfico
-ggplot(df_all, aes(x = physeq, y = ASV_count, fill = stage)) +
+# ggplot(df_all, aes(x = physeq, y = ASV_count, fill = stage)) +
+#   geom_bar(stat = "identity", position = "dodge") +
+#   geom_text(aes(label = ASV_count), position = position_dodge(width = .9), vjust = -0.5, , size = 2)+
+#   facet_wrap(~params, scales = "free_y") +
+#   scale_y_continuous(limits = c(0, max(df_all$ASV_count) * 1.15)) +
+#   theme_minimal(base_size = 12) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+#   labs(title = paste0("ASVs por parámetros de filtrado – Nivel taxonómico: ", tax),
+#        x = "Dataset", y = "Número de ASVs", fill = "Etapa")
+  ggplot(df_all, aes(y = physeq, x = ASV_count, fill = stage)) +
   geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = ASV_count), position = position_dodge(width = .9), vjust = -0.5, , size = 2)+
+  geom_text(aes(label = ASV_count),
+            position = position_dodge(width = .9), 
+            hjust = -0.2, size = 2) +
   facet_wrap(~params, scales = "free_y") +
-  scale_y_continuous(limits = c(0, max(df_all$ASV_count) * 1.15)) +
+  scale_x_continuous(limits = c(0, max(df_all$ASV_count) * 1.15)) +
   theme_minimal(base_size = 12) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(axis.text.y = element_text(angle = 0)) +
   labs(title = paste0("ASVs por parámetros de filtrado – Nivel taxonómico: ", tax),
-       x = "Dataset", y = "Número de ASVs", fill = "Etapa")
+       x = "Número de ASVs", y = "Dataset", fill = "Etapa") 
 }
 
 ```
