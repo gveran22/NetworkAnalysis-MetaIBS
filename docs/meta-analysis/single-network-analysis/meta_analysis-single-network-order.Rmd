@@ -259,7 +259,8 @@ ggplot(melted_hub, aes(x = Taxon, y = Study, fill = as.factor(Presence))) +
     geom_tile(color = "grey90") + facet_wrap(~ Method, ncol = 1) +
     scale_fill_manual(values = c("0" = "white", "1" = "steelblue")) +
     theme_minimal()+
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+          axis.text.y = element_text(size = 7))
 
 melted_hub %>%
     group_by(Taxon) %>%
