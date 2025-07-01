@@ -236,7 +236,7 @@ ggplot(full_properties, aes(x = Edge_Density, y = Avg_Path_Length, color = Study
 
 ### 3.3.3. Hubs
 
-```{r global-prop-slr, fig.width=45, fig.height=15, echo=FALSE}
+```{r global-prop-slr, fig.width=24, fig.height=8, echo=FALSE}
 hub_matrix <- full_properties%>%
   select(Study, Method, Hubs) %>%
   mutate(Hubs = strsplit(Hubs, ",\\s*")) %>%
