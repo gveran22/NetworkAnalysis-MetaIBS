@@ -88,7 +88,7 @@ library(reshape2)
 
 ![](../../../outputs/single-network-analysis/plots/Order/global-prop-mb-1.png)<!-- -->![](../../../outputs/single-network-analysis/plots/Order/global-prop-mb-2.png)<!-- -->![](../../../outputs/single-network-analysis/plots/Order/global-prop-mb-3.png)<!-- -->![](../../../outputs/single-network-analysis/plots/Order/global-prop-mb-4.png)<!-- -->
 
-### 3.3.3. SLR
+### 3.3.3. Hubs
 
 ![](../../../outputs/single-network-analysis/plots/Order/global-prop-slr-1.png)<!-- -->
 
