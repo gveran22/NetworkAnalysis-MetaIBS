@@ -236,7 +236,7 @@ ggplot(full_properties, aes(x = Edge_Density, y = Avg_Path_Length, color = Study
 
 ### 3.3.3. SLR
 
-```{r global-prop-slr, echo=FALSE}
+```{r global-prop-slr, fig.width=80, fig.height=30, echo=FALSE}
 hub_matrix <- full_properties%>%
   select(Study, Method, Hubs) %>%
   mutate(Hubs = strsplit(Hubs, ",\\s*")) %>%
@@ -251,13 +251,6 @@ hub_mat <- hub_matrix %>%
 
 melted_hub <- melt(hub_mat)
 colnames(melted_hub) <- c("Study_Method", "Taxon", "Presence")
-
-ggplot(melted_hub, aes(x = Taxon, y = Study_Method, fill = Presence)) +
-  geom_tile(color = "grey90") +
-  scale_fill_gradient(low = "white", high = "steelblue") +
-  theme_minimal() +
-  labs(title = "Hubs Heatmap", x = "Taxon", y = "Study + Method")+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 melted_hub <- melted_hub %>%
   separate(Study_Method, into = c("Study", "Method"), sep = "_")

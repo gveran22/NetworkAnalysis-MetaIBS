@@ -90,7 +90,7 @@ library(reshape2)
 
 ### 3.3.3. SLR
 
-![](../../../outputs/single-network-analysis/plots/Order/global-prop-slr-1.png)<!-- -->![](../../../outputs/single-network-analysis/plots/Order/global-prop-slr-2.png)<!-- -->
+![](../../../outputs/single-network-analysis/plots/Order/global-prop-slr-1.png)<!-- -->
 
 | Taxon                               | HubCount |
 |:------------------------------------|---------:|
