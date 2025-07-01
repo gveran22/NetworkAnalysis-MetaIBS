@@ -31,6 +31,7 @@ library(SpiecEasi)
 library(igraph)
 library(VennDiagram)
 library(NetCoMi)
+library(reshape2)
 ```
 
 ```{r path-directories, echo=FALSE}
@@ -146,33 +147,27 @@ matrices.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
 matrices.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
 matrices.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
 
+all_matrices <- c(matrices.gl, matrices.mb, matrices.slr)
+total_meta <- summary_assoc_matrix(all_matrices, "mean") 
+
+meta_layout <- plot_network(total_meta, title = "", thresh = 0, repulsion = 0.6)$layout$layout1
+
 meta.gl <- summary_assoc_matrix(matrices.gl, "mean")
 meta.mb <- summary_assoc_matrix(matrices.mb, "mean")
 meta.slr <- summary_assoc_matrix(matrices.slr, "mean")
-
-thresh.gl <- mean(meta.gl) + 0.5*sd(meta.gl)
-thresh.mb <- mean(meta.mb) + 0.5*sd(meta.mb)
-thresh.slr <- mean(meta.slr) + 0.5*sd(meta.slr)
-
-result.gl <- plot_network(meta.gl, title = "Mean Network GLasso", thresh = thresh.gl, repulsion = 0.6)
-result.mb <- plot_network(meta.mb, title = "Mean Network MB", thresh = thresh.mb, repulsion = 0.53)
-result.slr <- plot_network(meta.slr, title = "Mean Network SLR", thresh = thresh.slr, repulsion = 0.6)
 
 prop.gl <- summary_assoc_matrix(matrices.gl, "proportion")
 prop.mb <- summary_assoc_matrix(matrices.mb, "proportion")
 prop.slr <- summary_assoc_matrix(matrices.slr, "proportion")
 
-result.prop.gl <- plot_network(prop.gl, title = "Proportion Network GLasso",  dataType ="proportionality", 
-                               thresh = 0.4)
-result.prop.mb <- plot_network(prop.mb, title = "Proportion Network MB",  dataType ="proportionality",
-                               thresh = 0.4)
-result.prop.slr <- plot_network(prop.slr, title = "Proportion Network SLR",  dataType ="proportionality",
-                                thresh = 0.4)
+result.prop.gl <- plot_network(prop.gl, title = "Proportion Network GLasso",  dataType ="proportionality", thresh = 0)
+result.prop.mb <- plot_network(prop.mb, title = "Proportion Network MB",  dataType ="proportionality", thresh = 0)
+result.prop.slr <- plot_network(prop.slr, title = "Proportion Network SLR",  dataType ="proportionality", thresh = 0)
 
 ### Common associations
-asso_g <- network_construct(prop.gl, "proportionality", thresh = 0.4)$input$assoMat1
-asso_mb <- network_construct(prop.mb, "proportionality", thresh = 0.4)$input$assoMat1
-asso_slr <- network_construct(prop.slr, "proportionality", thresh = 0.4)$input$assoMat1
+asso_g <- network_construct(prop.gl, "proportionality", thresh = 0)$input$assoMat1
+asso_mb <- network_construct(prop.mb, "proportionality", thresh = 0)$input$assoMat1
+asso_slr <- network_construct(prop.slr, "proportionality", thresh = 0)$input$assoMat1
 
 asso_g <- ifelse(asso_g!=0,1,0)
 asso_mb <- ifelse(asso_mb!=0,1,0)
@@ -185,44 +180,95 @@ common_net <- plot_network(common_mat, title = paste0("Common associations - ", 
 ## 3.2. Individual Plots
 
 ```{r single-network, out.width="33%", fig.show="hold", fig.align="default", echo=FALSE}
-layout.gl <- result.gl$layout$layout1
-layout.mb <- result.mb$layout$layout1
-layout.slr <- result.slr$layout$layout1
 
 for (i in seq(matrices.gl)){
   mat.gl <- matrices.gl[[i]]
   mat.mb <- matrices.mb[[i]]
   mat.slr <- matrices.slr[[i]]
   
-  plot_individual_network(mat.gl, meta.gl, layout.gl, datasets_names[[i]], "GLasso")
-  plot_individual_network(mat.mb, meta.mb, layout.mb, datasets_names[[i]], "MB")
-  plot_individual_network(mat.slr, meta.slr, layout.slr, datasets_names[[i]], "SLR")
+  plot_individual_network(mat.gl, meta.gl, meta_layout, datasets_names[[i]], "GLasso")
+  plot_individual_network(mat.mb, meta.mb, meta_layout, datasets_names[[i]], "MB")
+  plot_individual_network(mat.slr, meta.slr, meta_layout, datasets_names[[i]], "SLR")
 }
 ```
 
 
 ## 3.3. Global Properties 
 
-### 3.3.1. GLasso
+### 3.3.1. Summary
 
 ```{r global-prop-gl, echo=FALSE}
-merged_df_gl <- process_global_properties(datasets_names, path.properties, agg_level, 1)
-merged_df_gl %>%
-  knitr::kable(format = "markdown") 
+properties_gl <- process_global_properties(datasets_names, path.properties, agg_level, 1)
+properties_mb <- process_global_properties(datasets_names, path.properties, agg_level, 2)
+properties_slr <- process_global_properties(datasets_names, path.properties, agg_level, 3)
+
+full_properties <- rbind(properties_gl,properties_mb,properties_slr)
+full_properties
 ```
 
-### 3.3.2 MB
+### Some Plots
 
 ```{r global-prop-mb, echo=FALSE}
-merged_df_mb <- process_global_properties(datasets_names, path.properties, agg_level, 2)
-merged_df_mb %>%
-  knitr::kable(format = "markdown")
+ggplot(full_properties, aes(x = Method, y = Clustering, fill = Method)) +
+  geom_boxplot() +
+  theme_minimal()
+
+ggplot(full_properties, aes(x = Method, y = Modularity, fill = Method)) +
+  geom_boxplot() +
+  theme_minimal()
+
+ggplot(full_properties, aes(x = Method, y = Positive_Edges, fill = Method)) +
+  geom_boxplot() +
+  theme_minimal()
+
+ggplot(full_properties, aes(x = Edge_Density, y = Avg_Path_Length, color = Study, shape = Method)) +
+    geom_point(size = 3) +
+    geom_smooth(method = "lm", se = FALSE, linetype = "dashed", color = "grey50") +
+    theme_minimal() +
+    labs(title = "Edge Density vs. Average Path Length",
+         x = "Edge Density",
+         y = "Average Path Length",
+         color = "Method",
+         shape = "Study")+facet_wrap(~ Method)
 ```
 
 ### 3.3.3. SLR
 
 ```{r global-prop-slr, echo=FALSE}
-merged_df_slr <- process_global_properties(datasets_names, path.properties, agg_level, 3)
-merged_df_slr %>%
-  knitr::kable(format = "markdown")
+hub_matrix <- full_properties%>%
+  select(Study, Method, Hubs) %>%
+  mutate(Hubs = strsplit(Hubs, ",\\s*")) %>%
+  unnest(Hubs) %>%
+  mutate(Present = 1) %>%
+  pivot_wider(names_from = Hubs, values_from = Present, values_fill = 0)
+
+hub_mat <- hub_matrix %>%
+  unite("Study_Method", Study, Method, sep = "_") %>%
+  column_to_rownames("Study_Method") %>%
+  as.matrix()
+
+melted_hub <- melt(hub_mat)
+colnames(melted_hub) <- c("Study_Method", "Taxon", "Presence")
+
+ggplot(melted_hub, aes(x = Taxon, y = Study_Method, fill = Presence)) +
+  geom_tile(color = "grey90") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  theme_minimal() +
+  labs(title = "Hubs Heatmap", x = "Taxon", y = "Study + Method")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+melted_hub <- melted_hub %>%
+  separate(Study_Method, into = c("Study", "Method"), sep = "_")
+
+ggplot(melted_hub, aes(x = Taxon, y = Study, fill = as.factor(Presence))) +
+    geom_tile(color = "grey90") + facet_wrap(~ Method, ncol = 1) +
+    scale_fill_manual(values = c("0" = "white", "1" = "steelblue")) +
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+melted_hub %>%
+    group_by(Taxon) %>%
+    summarise(HubCount = sum(Presence)) %>%
+    arrange(desc(HubCount))
+
 ```
