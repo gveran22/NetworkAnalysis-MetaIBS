@@ -72,7 +72,7 @@ load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_inde
 
 # Function to plot meta-analysis
 plot_network <- function(meta, layout = NULL, title = "Meta-Analysis", dataType = "condDependence", 
-                         thresh = 0, repulsion=0.7) {
+                         thresh = 0, repulsion=0.7, doPlot=T) {
   props_asso_meta <- network_construct(meta, dataType = dataType , thresh = thresh)
   plot(props_asso_meta,
        layout = layout,
@@ -88,7 +88,8 @@ plot_network <- function(meta, layout = NULL, title = "Meta-Analysis", dataType 
        title1 = title,
        showTitle = TRUE,
        cexTitle = 2,
-       hubBorderCol = "gray40")
+       hubBorderCol = "gray40",
+       doPlot=doPlot)
 }
 
 # Function to process individual plots
@@ -112,7 +113,7 @@ plot_individual_network <- function(matrix, meta, layout,  datasets_names, metho
   
   props_asso <- network_construct(filtered_meta_adj)
   plot(props_asso,
-       layout = layout,
+       layout = layout[common_rows,],
        nodeColor = "cluster",
        labelScale = FALSE,
        rmSingles = "none",#TRUE,
@@ -122,7 +123,7 @@ plot_individual_network <- function(matrix, meta, layout,  datasets_names, metho
        cexHubLabels = 1,
        title1 = paste0("Network Analysis ",  str_to_title(datasets_names)," ",method),
        showTitle = TRUE,
-       cexTitle = 2,
+       cexTitle = 1.5,
        hubBorderCol  = "gray40")
   
 }
@@ -150,7 +151,7 @@ matrices.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
 all_matrices <- c(matrices.gl, matrices.mb, matrices.slr)
 total_meta <- summary_assoc_matrix(all_matrices, "mean") 
 
-meta_layout <- plot_network(total_meta, title = "", thresh = 0, repulsion = 0.6)$layout$layout1
+meta_layout <- plot_network(total_meta, title = "", thresh = 0, repulsion = 0.6, doPlot=F)$layout$layout1
 
 meta.gl <- summary_assoc_matrix(matrices.gl, "mean")
 meta.mb <- summary_assoc_matrix(matrices.mb, "mean")
@@ -203,7 +204,8 @@ properties_mb <- process_global_properties(datasets_names, path.properties, agg_
 properties_slr <- process_global_properties(datasets_names, path.properties, agg_level, 3)
 
 full_properties <- rbind(properties_gl,properties_mb,properties_slr)
-full_properties
+full_properties %>%
+  knitr::kable(format = "markdown") 
 ```
 
 ### Some Plots
@@ -269,6 +271,7 @@ ggplot(melted_hub, aes(x = Taxon, y = Study, fill = as.factor(Presence))) +
 melted_hub %>%
     group_by(Taxon) %>%
     summarise(HubCount = sum(Presence)) %>%
-    arrange(desc(HubCount))
+    arrange(desc(HubCount))%>%
+  knitr::kable(format = "markdown") 
 
 ```
