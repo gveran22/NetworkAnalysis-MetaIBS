@@ -19,6 +19,7 @@ library(igraph)
 library(VennDiagram)
 library(NetCoMi)
 library(reshape2)
+library(ggrepel)
 ```
 
 ------------------------------------------------------------------------
@@ -90,7 +91,7 @@ library(reshape2)
 
 ### 3.3.3. Hubs
 
-![](../../../outputs/single-network-analysis/plots/Order/global-prop-slr-1.png)<!-- -->
+![](../../../outputs/single-network-analysis/plots/Order/heatmaps-1.png)<!-- -->
 
 | Taxon                               | HubCount |
 |:------------------------------------|---------:|

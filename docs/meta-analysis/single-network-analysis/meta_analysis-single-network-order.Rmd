@@ -32,6 +32,7 @@ library(igraph)
 library(VennDiagram)
 library(NetCoMi)
 library(reshape2)
+library(ggrepel)
 ```
 
 ```{r path-directories, echo=FALSE}
@@ -73,11 +74,13 @@ load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_inde
 # Function to plot meta-analysis
 plot_network <- function(meta, layout = NULL, title = "Meta-Analysis", dataType = "condDependence", 
                          thresh = 0, repulsion=0.7, doPlot=T) {
+  
+  
   props_asso_meta <- network_construct(meta, dataType = dataType , thresh = thresh)
+  
   plot(props_asso_meta,
-       layout = layout,
+       layout = layout[rownames(meta),],
        repulsion = repulsion,
-       sameLayout = TRUE,
        nodeColor = "cluster",
        labelScale = FALSE,
        rmSingles = TRUE,
@@ -134,6 +137,19 @@ plot_individual_networks <- function(matrices, meta, layout, datasets_names, met
     plot_individual_network(matrices[[i]], meta, layout,  datasets_names[[i]], method)
   }
 }
+
+clean_matrix <- function(meta){
+  # Set the diagonal to 0 temporarily
+  mat_no_diag <- meta
+  diag(mat_no_diag) <- 0
+
+  # Now check row/column sums again
+  connected <- (rowSums(mat_no_diag) + colSums(mat_no_diag)) > 0
+
+  # Subset the matrix to keep only connected nodes
+  mat_clean <- meta[connected, connected]
+  return(mat_clean)
+}
 ```
 
 ******************
@@ -157,13 +173,17 @@ meta.gl <- summary_assoc_matrix(matrices.gl, "mean")
 meta.mb <- summary_assoc_matrix(matrices.mb, "mean")
 meta.slr <- summary_assoc_matrix(matrices.slr, "mean")
 
+plot_network(meta.gl, meta_layout, title = "Mean Network GLasso", thresh = 0)
+plot_network(meta.mb, meta_layout, title = "Mean Network MB", thresh = 0)
+plot_network(meta.slr, meta_layout, title = "Mean Network SLR", thresh = 0)
+
 prop.gl <- summary_assoc_matrix(matrices.gl, "proportion")
 prop.mb <- summary_assoc_matrix(matrices.mb, "proportion")
 prop.slr <- summary_assoc_matrix(matrices.slr, "proportion")
 
-result.prop.gl <- plot_network(prop.gl, title = "Proportion Network GLasso",  dataType ="proportionality", thresh = 0)
-result.prop.mb <- plot_network(prop.mb, title = "Proportion Network MB",  dataType ="proportionality", thresh = 0)
-result.prop.slr <- plot_network(prop.slr, title = "Proportion Network SLR",  dataType ="proportionality", thresh = 0)
+#result.prop.gl <- plot_network(prop.gl, meta_layout, title = "Proportion Network GLasso",  dataType ="proportionality", thresh = 0.2)
+#result.prop.mb <- plot_network(prop.mb, meta_layout, title = "Proportion Network MB",  dataType ="proportionality", thresh = 0.2)
+#result.prop.slr <- plot_network(prop.slr, meta_layout, title = "Proportion Network SLR",  dataType ="proportionality", thresh = 0.2)
 
 ### Common associations
 asso_g <- network_construct(prop.gl, "proportionality", thresh = 0)$input$assoMat1
@@ -212,31 +232,36 @@ full_properties %>%
 
 ```{r global-prop-mb, echo=FALSE}
 ggplot(full_properties, aes(x = Method, y = Clustering, fill = Method)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
   theme_minimal()
 
 ggplot(full_properties, aes(x = Method, y = Modularity, fill = Method)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
   theme_minimal()
 
 ggplot(full_properties, aes(x = Method, y = Positive_Edges, fill = Method)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
   theme_minimal()
 
-ggplot(full_properties, aes(x = Edge_Density, y = Avg_Path_Length, color = Study, shape = Method)) +
-    geom_point(size = 3) +
-    geom_smooth(method = "lm", se = FALSE, linetype = "dashed", color = "grey50") +
+ggplot(full_properties, aes(x = Edge_Density, y = Avg_Path_Length)) +
+    geom_point(size = 3, color="steelblue") +
+    geom_smooth(method = "lm", se = FALSE, linetype = "dashed", color = "gray70") +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
     theme_minimal() +
     labs(title = "Edge Density vs. Average Path Length",
          x = "Edge Density",
-         y = "Average Path Length",
-         color = "Method",
-         shape = "Study")+facet_wrap(~ Method)
+         y = "Average Path Length")+facet_wrap(~ Method)
 ```
 
 ### 3.3.3. Hubs
 
-```{r global-prop-slr, fig.width=15, fig.height=7, echo=FALSE}
+```{r heatmaps, fig.width=15, fig.height=7, echo=FALSE}
 hub_matrix <- full_properties%>%
   select(Study, Method, Hubs) %>%
   mutate(Hubs = strsplit(Hubs, ",\\s*")) %>%
@@ -260,7 +285,9 @@ ggplot(melted_hub, aes(x = Taxon, y = Study, fill = as.factor(Presence))) +
     scale_fill_manual(values = c("0" = "white", "1" = "steelblue")) +
     theme_minimal()+
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-          axis.text.y = element_text(size = 7))
+          axis.text.y = element_text(size = 7))+
+  labs(x = "Taxon", y = "Study", fill = "Presence")+
+  labs(title = "Heatmap Hubs")
 
 melted_hub %>%
     group_by(Taxon) %>%
