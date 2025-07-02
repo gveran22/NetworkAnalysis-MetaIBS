@@ -540,7 +540,7 @@ ggplot(melted_hub%>%filter(Method=="gl"), aes(x = Taxon, y = Study, #interaction
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
           axis.text.y = element_text(size = 7)) +
-  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(x = "Taxon", y = "Study", fill = "Presence")+
   labs(title = "Heatmap Hubs gl Method")
 
 ggplot(melted_hub%>%filter(Method=="mb"), aes(x = Taxon, y = Study, #interaction(Study, Group, sep = "-")
@@ -550,7 +550,7 @@ ggplot(melted_hub%>%filter(Method=="mb"), aes(x = Taxon, y = Study, #interaction
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
           axis.text.y = element_text(size = 7)) +
-  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(x = "Taxon", y = "Study", fill = "Presence")+
   labs(title = "Heatmap Hubs mb Method")
 
 ggplot(melted_hub%>%filter(Method=="slr"), aes(x = Taxon, y = Study, #interaction(Study, Group, sep = "-")
@@ -560,7 +560,7 @@ ggplot(melted_hub%>%filter(Method=="slr"), aes(x = Taxon, y = Study, #interactio
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
           axis.text.y = element_text(size = 7)) +
-  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(x = "Taxon", y = "Study", fill = "Presence")+
   labs(title = "Heatmap Hubs slr Method")
 
 
@@ -571,7 +571,7 @@ ggplot(melted_hub, aes(x = Taxon, y = Study, #interaction(Study, Group, sep = "-
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1,size = 7),
           axis.text.y = element_text(size = 7)) +
-  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(x = "Taxon", y = "Study", fill = "Presence")+
   labs(title = "Heatmap Hubs")
 ```
 
