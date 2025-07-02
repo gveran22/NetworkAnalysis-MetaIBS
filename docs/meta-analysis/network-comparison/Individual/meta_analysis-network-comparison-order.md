@@ -97,6 +97,4 @@ library(ggrepel)
 
 ### 3.4.3. Hubs
 
-![](../../../../outputs/network-comparison/Individual/plots/Order/global-prop-slr-1.png)<!-- -->
-
 ![](../../../../outputs/network-comparison/Individual/plots/Order/heatmaps-1.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/heatmaps-2.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/heatmaps-3.png)<!-- -->![](../../../../outputs/network-comparison/Individual/plots/Order/heatmaps-4.png)<!-- -->

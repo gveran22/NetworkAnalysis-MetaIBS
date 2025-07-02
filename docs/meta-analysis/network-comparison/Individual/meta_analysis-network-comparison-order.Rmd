@@ -217,15 +217,15 @@ prop_IBS.mb <- summary_assoc_matrix(matrices_IBS.mb, "proportion")
 prop_H.slr <- summary_assoc_matrix(matrices_H.slr, "proportion")
 prop_IBS.slr <- summary_assoc_matrix(matrices_IBS.slr, "proportion")
 
-result.prop.gl <- plot_network_comparison(prop_H.gl, prop_IBS.gl, 
+result.prop.gl <- plot_network_comparison(prop_H.gl, prop_IBS.gl, layout = meta_layout, 
                                           groupNames = c("Proportion Network Healthy GLasso", 
                                                           "Proportion Network IBS GLasso"),  
                                dataType ="proportionality", thresh = 0)
-result.prop.gl <- plot_network_comparison(prop_H.mb, prop_IBS.mb, 
+result.prop.gl <- plot_network_comparison(prop_H.mb, prop_IBS.mb, layout = meta_layout, 
                                           groupNames = c("Proportion Network Healthy MB", 
                                                           "Proportion Network IBS MB"),  
                                dataType ="proportionality", thresh = 0)
-result.prop.gl <- plot_network_comparison(prop_H.slr, prop_IBS.slr, 
+result.prop.gl <- plot_network_comparison(prop_H.slr, prop_IBS.slr, layout = meta_layout, 
                                           groupNames = c("Proportion Network Healthy SLR", 
                                                           "Proportion Network IBS SLR GLasso"),  
                                dataType ="proportionality", thresh = 0)
@@ -476,7 +476,7 @@ ggplot(numeric_summary, aes(x = Group, y = Natural_Conn, fill = Group)) +
        y = "Natural Connectivity", x = "Method")
 
 ggplot(numeric_summary, aes(x = Edge_Density, y = Avg_Path_Length)) +
-    geom_point(size = 3, color="blue") +
+    geom_point(size = 3, color="steelblue") +
     geom_smooth(method = "lm", se = FALSE, linetype = "dashed", color = "gray70") +
   geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
     theme_minimal() +
@@ -487,19 +487,6 @@ ggplot(numeric_summary, aes(x = Edge_Density, y = Avg_Path_Length)) +
 ```
 
 ### 3.4.3. Hubs
-
-```{r global-prop-slr, echo=FALSE}
-full_properties_l <- full_properties %>%
-  mutate(Delta_Clustering = Clustering_IBS - Clustering_H)
-
-ggplot(full_properties_l, aes(x = Method, y = Delta_Clustering, fill = Method)) +
-  geom_boxplot() +
-  geom_jitter(width = 0.2, color = "black", size = 2) +
-  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
-  theme_minimal() +
-  labs(title = "Change in Clustering Coefficient (IBS - Healthy)",
-       y = "Δ Clustering Coefficient", x = "Method")
-```
 
 
 ```{r heatmaps, fig.width=15, fig.height=7, echo=FALSE}
