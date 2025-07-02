@@ -30,12 +30,14 @@ library(ggplot2)
 library(SpiecEasi)
 library(igraph)
 library(NetCoMi)
+library(reshape2)
+library(ggrepel)
 ```
 
 ```{r path-directories, echo=FALSE}
 # ROOT DIRECTORY (to modify on your computer)
 path.root <- "~/MetaIBS"
-path.datasets    <- file.path(path.root, "data/Individual/phyloseq_without_tree")
+path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/network-comparison/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
@@ -71,15 +73,15 @@ load_matrices <- function(datasets_names, path.assoc_mat, agg_level, object_inde
 
 # Function to plot meta-analysis comparison
 plot_network_comparison <- function(meta_H, meta_IBS, layout = NULL, groupNames = c("Healthy", "IBS"), 
-                                    dataType = "condDependence", thresh = 0, repulsion =0.7) {
+                                    dataType = "condDependence", thresh = 0, repulsion =0.7, doPlot=T) {
   props_asso_meta <- network_construct_comparison(meta_H, meta_IBS, dataType = dataType , thresh = thresh)
   plot(props_asso_meta,
-       layout = layout,
+       layout = layout, #[rownames(meta_H),]
        repulsion = repulsion,
        sameLayout = TRUE,
        nodeColor = "cluster",
        labelScale = FALSE,
-       rmSingles = TRUE,
+       rmSingles = "none", #
        nodeSize = "eigenvector",
        cexNodes = 0.58,
        cexLabels = 0.7,
@@ -88,7 +90,8 @@ plot_network_comparison <- function(meta_H, meta_IBS, layout = NULL, groupNames 
        groupNames = groupNames,
        showTitle = TRUE,
        cexTitle = 1.5,
-       hubBorderCol = "gray40")
+       hubBorderCol = "gray40",
+       doPlot=doPlot)
 }
 
 # Function to process individual plots comparison
@@ -100,7 +103,7 @@ plot_individual_network_comparison <- function(matrix_H, matrix_IBS, meta_H, met
   # Skip if no connected nodes
   if (sum(sub_adj_H) == 0 && sum(sub_adj_IBS) == 0) {
     message(paste0("Skipping network ", datasets_names, " due to no connected nodes."))
-    next
+    return(NULL) 
   }
   
   common_rows_H <- intersect(rownames(meta_H), rownames(sub_adj_H))
@@ -116,13 +119,14 @@ plot_individual_network_comparison <- function(matrix_H, matrix_IBS, meta_H, met
   filtered_meta_adj_H[common_rows_H, common_cols_H] <- meta_H[common_rows_H, common_cols_H] * (sub_adj_H[common_rows_H, common_cols_H] != 0)
   filtered_meta_adj_IBS[common_rows_IBS, common_cols_IBS] <- meta_IBS[common_rows_IBS, common_cols_IBS] * (sub_adj_IBS[common_rows_IBS, common_cols_IBS] != 0)
   
+  all_common <- unique(c(common_rows_H,common_rows_IBS))
   props_asso <- network_construct_comparison(filtered_meta_adj_H, filtered_meta_adj_IBS)
   plot(props_asso,
-       layout = layout,
-       #sameLayout = TRUE,
+       layout = layout[all_common,],
+       sameLayout = TRUE,
        nodeColor = "cluster",
        labelScale = FALSE,
-       rmSingles = TRUE,
+       rmSingles = "none",
        nodeSize = "eigenvector",
        cexNodes = 0.58,
        cexLabels = 1.5,
@@ -141,14 +145,34 @@ plot_individual_networks_comparison <- function(matrices_H, matrices_IBS, meta_H
                                         layout, datasets_names[i], method)
   }
 }
+
+# Compute differential networks between two groups
+diff_networks <- function(mat1, mat2) {
+  # Binarize based on zero vs non-zero (assume already thresholded)
+  bin1 <- (mat1 != 0) * 1
+  bin2 <- (mat2 != 0) * 1
+  
+  # Identify edges unique to each group
+  only_1 <- (bin1 == 1) & (bin2 == 0)
+  only_2 <- (bin2 == 1) & (bin1 == 0)
+  
+  only_mat_1 <- mat1 * only_1
+  only_mat_2 <- mat2 * only_2
+  
+  return(list(
+    only_1 = only_mat_1,
+    only_2 = only_mat_2
+  ))
+}
+
+
 ```
 
 ******************
 # 3. META-ANALYSIS
 ******************
 
-## 3.1. Summary Plots
-
+## 3.1. Summary Networks
 ```{r meta-analysis-glasso, fig.width=30, fig.height=13, echo=FALSE}
 
 matrices_H.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
@@ -158,6 +182,15 @@ matrices_IBS.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 5)
 matrices_H.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 3)
 matrices_IBS.slr <- load_matrices(datasets_names, path.assoc_mat, agg_level, 6)
 
+matrices_H <- c(matrices_H.gl, matrices_H.mb, matrices_H.slr)
+matrices_IBS <- c(matrices_IBS.gl, matrices_IBS.mb, matrices_IBS.slr)
+meta_H <- summary_assoc_matrix(matrices_H, "mean") 
+meta_IBS <- summary_assoc_matrix(matrices_IBS, "mean") 
+
+meta_layout <- plot_network_comparison(meta_H,meta_IBS, groupNames = c("", ""),
+                                       thresh = 0, repulsion = 0.6, doPlot=F)$layout$layout1
+
+
 meta_H.gl <- summary_assoc_matrix(matrices_H.gl, "mean")
 meta_IBS.gl <- summary_assoc_matrix(matrices_IBS.gl, "mean")
 meta_H.mb <- summary_assoc_matrix(matrices_H.mb, "mean")
@@ -165,30 +198,16 @@ meta_IBS.mb <- summary_assoc_matrix(matrices_IBS.mb, "mean")
 meta_H.slr <- summary_assoc_matrix(matrices_H.slr, "mean")
 meta_IBS.slr <- summary_assoc_matrix(matrices_IBS.slr, "mean")
 
-thresh_H.gl <- mean(meta_H.gl) + 0.3*sd(meta_H.gl)
-thresh_IBS.gl <- mean(meta_IBS.gl) + 0.3*sd(meta_IBS.gl)
-thresh.gl <- (thresh_H.gl / var(meta_H.gl) + thresh_IBS.gl / var(meta_IBS.gl)) / 
-             (1 / var(meta_H.gl) + 1 / var(meta_IBS.gl))
-
-thresh_H.mb <- mean(meta_H.mb) + 0.3*sd(meta_H.mb)
-thresh_IBS.mb <- mean(meta_IBS.mb) + 0.3*sd(meta_IBS.mb)
-thresh.mb <- (thresh_H.mb / var(meta_H.mb) + thresh_IBS.mb / var(meta_IBS.mb)) / 
-             (1 / var(meta_H.mb) + 1 / var(meta_IBS.mb))
-
-thresh_H.slr <- mean(meta_H.slr) + 0.3*sd(meta_H.slr)
-thresh_IBS.slr <- mean(meta_IBS.slr) + 0.3*sd(meta_IBS.slr)
-thresh.slr <- (thresh_H.slr / var(meta_H.slr) + thresh_IBS.slr / var(meta_IBS.slr)) / 
-             (1 / var(meta_H.slr) + 1 / var(meta_IBS.slr))
-
-
-result.gl <- plot_network_comparison(meta_H.gl, meta_IBS.gl, groupNames = c("Mean Network Healthy GLasso", 
-                                                          "Mean Network IBS GLasso"), thresh = thresh.gl,
+result.gl <- plot_network_comparison(meta_H.gl, meta_IBS.gl, layout = meta_layout, 
+                                     groupNames = c("Mean Network Healthy GLasso", 
+                                                          "Mean Network IBS GLasso"), thresh = 0)
+result.mb <- plot_network_comparison(meta_H.mb, meta_IBS.mb, layout = meta_layout, 
+                                     groupNames = c("Mean Network Healthy MB", 
+                                                          "Mean Network IBS MB"), thresh = 0,
                                            repulsion = 0.50008)
-result.mb <- plot_network_comparison(meta_H.mb, meta_IBS.mb, groupNames = c("Mean Network Healthy MB", 
-                                                          "Mean Network IBS MB"), thresh = thresh.mb,
-                                           repulsion = 0.50008)
-result.slr <- plot_network_comparison(meta_H.slr, meta_IBS.slr, groupNames = c("Mean Network Healthy SLR", 
-                                                          "Mean Network IBS SLR"), thresh = thresh.slr,
+result.slr <- plot_network_comparison(meta_H.slr, meta_IBS.slr, layout = meta_layout, 
+                                      groupNames = c("Mean Network Healthy SLR", 
+                                                          "Mean Network IBS SLR"), thresh = 0,
                                            repulsion = 0.50008)
 
 prop_H.gl <- summary_assoc_matrix(matrices_H.gl, "proportion")
@@ -201,30 +220,27 @@ prop_IBS.slr <- summary_assoc_matrix(matrices_IBS.slr, "proportion")
 result.prop.gl <- plot_network_comparison(prop_H.gl, prop_IBS.gl, 
                                           groupNames = c("Proportion Network Healthy GLasso", 
                                                           "Proportion Network IBS GLasso"),  
-                               dataType ="proportionality", 
-                               thresh = 0.3)
+                               dataType ="proportionality", thresh = 0)
 result.prop.gl <- plot_network_comparison(prop_H.mb, prop_IBS.mb, 
                                           groupNames = c("Proportion Network Healthy MB", 
                                                           "Proportion Network IBS MB"),  
-                               dataType ="proportionality", 
-                               thresh = 0.3)
+                               dataType ="proportionality", thresh = 0)
 result.prop.gl <- plot_network_comparison(prop_H.slr, prop_IBS.slr, 
                                           groupNames = c("Proportion Network Healthy SLR", 
                                                           "Proportion Network IBS SLR GLasso"),  
-                               dataType ="proportionality", 
-                               thresh = 0.3)
+                               dataType ="proportionality", thresh = 0)
 
 ### Common associations
-net_g <- network_construct_comparison(prop_H.gl, prop_IBS.gl, "proportionality", thresh = 0.3)
+net_g <- network_construct_comparison(prop_H.gl, prop_IBS.gl, "proportionality", thresh = 0)
 asso_H.g <- net_g$input$assoMat1
 asso_IBS.g <- net_g$input$assoMat2
 
 
-net_mb <- network_construct_comparison(prop_H.mb, prop_IBS.mb, "proportionality", thresh = 0.3)
+net_mb <- network_construct_comparison(prop_H.mb, prop_IBS.mb, "proportionality", thresh = 0)
 asso_H.mb <- net_mb$input$assoMat1
 asso_IBS.mb <- net_mb$input$assoMat2
 
-net_slr <- network_construct_comparison(prop_H.slr, prop_IBS.slr, "proportionality", thresh = 0.3)
+net_slr <- network_construct_comparison(prop_H.slr, prop_IBS.slr, "proportionality", thresh = 0)
 asso_H.slr <- net_slr$input$assoMat1
 asso_IBS.slr <- net_slr$input$assoMat2
 
@@ -239,7 +255,7 @@ common_mat_H <- asso_H.g*asso_H.mb*asso_H.slr
 common_mat_IBS <- asso_IBS.g*asso_IBS.mb*asso_IBS.slr
 
 tryCatch({
-plot_network_comparison(common_mat_H, common_mat_IBS, 
+plot_network_comparison(common_mat_H, common_mat_IBS, layout = meta_layout,
                                       groupNames = c(paste0("Common associations Healthy - ", agg_level), 
                                                           paste0("Common associations IBS - ", agg_level)),
                                       dataType ="proportionality", thresh = 0)
@@ -254,13 +270,9 @@ plot_network_comparison(common_mat_H, common_mat_IBS,
 })
 ```
 
-## 3.2. Individual Plots
+## 3.2. Individual Networks
 
 ```{r single-network-glasso, fig.width=30, fig.height=13, echo=FALSE}
-layout.gl <- result.gl$layout$layout1
-layout.mb <- result.mb$layout$layout1
-layout.slr <- result.slr$layout$layout1
-
 for (i in seq(matrices_H.gl)){
   mat_H.gl <- matrices_H.gl[[i]]
   mat_IBS.gl <- matrices_IBS.gl[[i]]
@@ -271,7 +283,7 @@ for (i in seq(matrices_H.gl)){
   
   tryCatch({
   plot_individual_network_comparison(mat_H.gl, mat_IBS.gl, meta_H.gl, meta_IBS.gl, 
-                                     layout.gl, datasets_names[[i]], "GLasso")
+                                     layout = meta_layout, datasets_names[[i]], "GLasso")
   }, error = function(e) {
   # Custom message when the error occurs
   if (grepl("There are no connected nodes in both networks", e$message)) {
@@ -284,7 +296,7 @@ for (i in seq(matrices_H.gl)){
   
   tryCatch({  
   plot_individual_network_comparison(mat_H.mb, mat_IBS.mb, meta_H.mb, meta_IBS.mb,
-                                     layout.mb, datasets_names[[i]], "MB")
+                                     layout = meta_layout, datasets_names[[i]], "MB")
   }, error = function(e) {
   # Custom message when the error occurs
   if (grepl("There are no connected nodes in both networks", e$message)) {
@@ -297,7 +309,7 @@ for (i in seq(matrices_H.gl)){
   
   tryCatch({ 
   plot_individual_network_comparison(mat_H.slr, mat_IBS.slr, meta_H.slr, meta_H.slr, 
-                                     layout.slr, datasets_names[[i]], "SLR")
+                                     layout = meta_layout, datasets_names[[i]], "SLR")
   }, error = function(e) {
   # Custom message when the error occurs
   if (grepl("There are no connected nodes in both networks", e$message)) {
@@ -308,31 +320,256 @@ for (i in seq(matrices_H.gl)){
   }
   })
 }
+
 ```
+## 3.3. Differential Networks
+```{r dif-networks, fig.width=30, fig.height=13, echo=FALSE}
+for (i in seq(matrices_H.gl)){
+  mat_H.gl <- matrices_H.gl[[i]]
+  mat_IBS.gl <- matrices_IBS.gl[[i]]
+  mat_H.mb <- matrices_H.mb[[i]]
+  mat_IBS.mb <- matrices_IBS.mb[[i]]
+  mat_H.slr <- matrices_H.slr[[i]]
+  mat_IBS.slr <- matrices_IBS.slr[[i]]
+  
+  tryCatch({
+    dif_mat.gl <- diff_networks(mat_H.gl, mat_IBS.gl)
+    plot_individual_network_comparison(dif_mat.gl$only_1, dif_mat.gl$only_2, meta_H.gl, meta_IBS.gl, 
+                                     layout = meta_layout, datasets_names[[i]], "GLasso")
+  }, error = function(e) {
+  # Custom message when the error occurs
+  if (grepl("There are no connected nodes in both networks", e$message)) {
+    print("No connected nodes")
+  } else {
+    # Re-throw the error if it's a different issue
+    stop(e)
+  }
+  })
+  
+  tryCatch({  
+    dif_mat.mb <- diff_networks(mat_H.mb, mat_IBS.mb)
+    plot_individual_network_comparison(dif_mat.mb$only_1, dif_mat.mb$only_2, meta_H.mb, meta_IBS.mb,
+                                     layout = meta_layout, datasets_names[[i]], "MB")
+  }, error = function(e) {
+  # Custom message when the error occurs
+  if (grepl("There are no connected nodes in both networks", e$message)) {
+    print("No connected nodes")
+  } else {
+    # Re-throw the error if it's a different issue
+    stop(e)
+  }
+  })
+  
+  tryCatch({ 
+    dif_mat.slr <- diff_networks(mat_H.slr, mat_IBS.slr)
+    plot_individual_network_comparison(dif_mat.slr$only_1, dif_mat.slr$only_2, meta_H.slr, meta_H.slr, 
+                                     layout = meta_layout, datasets_names[[i]], "SLR")
+  }, error = function(e) {
+  # Custom message when the error occurs
+  if (grepl("There are no connected nodes in both networks", e$message)) {
+    print("No connected nodes")
+  } else {
+    # Re-throw the error if it's a different issue
+    stop(e)
+  }
+  })
+}
 
-## 3.3. Global Properties
+```
+## 3.4. Global Properties
 
-### 3.3.1. GLasso
+### 3.4.1. Summary
 
-```{r global-prop-gl, echo=FALSE}
-merged_df_gl <- process_global_properties_comparison(datasets_names, path.properties, agg_level, 1)
-merged_df_gl %>%
+```{r summary, echo=FALSE}
+properties_gl <- process_global_properties_comparison(datasets_names, path.properties, agg_level, 1)
+properties_mb <- process_global_properties_comparison(datasets_names, path.properties, agg_level, 2)
+properties_slr <- process_global_properties_comparison(datasets_names, path.properties, agg_level, 3)
+
+full_properties <- rbind(properties_gl,properties_mb,properties_slr)
+full_properties %>%
   knitr::kable(format = "markdown") 
 ```
 
-### 3.3.2 MB
+### 3.4.2 Summary Plots
 
 
 ```{r global-prop-mb, echo=FALSE}
-merged_df_mb <- process_global_properties_comparison(datasets_names, path.properties, agg_level, 2)
-merged_df_mb %>%
-  knitr::kable(format = "markdown") 
+numeric_summary <- full_properties %>%
+  select(Study, Method, where(is.numeric)) %>%
+  pivot_longer(
+    cols = matches("_(H|IBS)$"),
+    names_to = c("Variable", "Group"),
+    names_pattern = "(.*)_(H|IBS)",
+    values_to = "Value"
+  ) %>%
+  pivot_wider(
+    names_from = "Variable",
+    values_from = "Value"
+  )
+
+# Plot
+ggplot(numeric_summary, aes(x = Study, y = Clustering, color = Group, group = Study)) +
+  geom_point(position = position_dodge(width = 0.3), size = 3) +
+  geom_line(aes(group = Study), color = "gray", alpha = 0.5) +
+  facet_wrap(~Method, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Clustering Coefficient: Healthy vs IBS",
+       y = "Clustering Coefficient", x = "Study") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(numeric_summary, aes(x = Study, y = Modularity, color = Group, group = Study)) +
+  geom_point(position = position_dodge(width = 0.3), size = 3) +
+  geom_line(aes(group = Study), color = "gray", alpha = 0.5) +
+  facet_wrap(~Method, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Modularity Coefficient: Healthy vs IBS",
+       y = "Modularity Coefficient", x = "Study") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(numeric_summary, aes(x = Study, y = Positive_Edges, color = Group, group = Study)) +
+  geom_point(position = position_dodge(width = 0.3), size = 3) +
+  geom_line(aes(group = Study), color = "gray", alpha = 0.5) +
+  facet_wrap(~Method, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Positive Edges Coefficient: Healthy vs IBS",
+       y = "Positive Edges Coefficient", x = "Study") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(numeric_summary, aes(x = Group, y = Clustering, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
+  facet_wrap(~ Method)+
+  theme_minimal() +
+  labs(title = "Clustering Coefficient",
+       y = "Clustering Coefficient", x = "Method")
+
+ggplot(numeric_summary, aes(x = Group, y = Modularity, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
+  facet_wrap(~ Method)+
+  theme_minimal() +
+  labs(title = "Modularity Coefficient",
+       y = "Modularity Coefficient", x = "Method")
+
+ggplot(numeric_summary, aes(x = Group, y = Positive_Edges, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
+  facet_wrap(~ Method)+
+  theme_minimal() +
+  labs(title = "Positive Edges",
+       y = "Positive_Edges", x = "Method")
+
+
+ggplot(numeric_summary, aes(x = Group, y = Natural_Conn, fill = Group)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
+  facet_wrap(~ Method)+
+  theme_minimal() +
+  labs(title = "Natural Connectivity",
+       y = "Natural Connectivity", x = "Method")
+
+ggplot(numeric_summary, aes(x = Edge_Density, y = Avg_Path_Length)) +
+    geom_point(size = 3, color="blue") +
+    geom_smooth(method = "lm", se = FALSE, linetype = "dashed", color = "gray70") +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
+    theme_minimal() +
+    labs(title = "Edge Density vs. Average Path Length",
+         x = "Edge Density",
+         y = "Average Path Length")+facet_wrap(~ interaction(Method, Group, sep = "-"))
+
 ```
 
-### 3.3.3. SLR
+### 3.4.3. Hubs
 
 ```{r global-prop-slr, echo=FALSE}
-merged_df_mb <- process_global_properties_comparison(datasets_names, path.properties, agg_level, 3)
-merged_df_mb %>%
-  knitr::kable(format = "markdown")
+full_properties_l <- full_properties %>%
+  mutate(Delta_Clustering = Clustering_IBS - Clustering_H)
+
+ggplot(full_properties_l, aes(x = Method, y = Delta_Clustering, fill = Method)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, color = "black", size = 2) +
+  geom_text_repel(aes(label = Study), size = 3, max.overlaps = Inf) +
+  theme_minimal() +
+  labs(title = "Change in Clustering Coefficient (IBS - Healthy)",
+       y = "Δ Clustering Coefficient", x = "Method")
 ```
+
+
+```{r heatmaps, fig.width=15, fig.height=7, echo=FALSE}
+hubs_summary <- full_properties %>%
+  select(Study, Method, Hubs_H, Hubs_IBS) %>%
+  pivot_longer(
+    cols = c(Hubs_H, Hubs_IBS),
+    names_to = "Group",
+    names_pattern = "Hubs_(.*)",
+    values_to = "Hubs"
+  )
+
+hub_matrix <- hubs_summary%>%
+  select(Study, Method, Group, Hubs) %>%
+  mutate(Hubs = strsplit(Hubs, ",\\s*")) %>%
+  unnest(Hubs) %>%
+  filter(Hubs !="", !is.na(Hubs))%>%
+  mutate(Present = 1) %>%
+  pivot_wider(names_from = Hubs, values_from = Present, values_fill = list(Present=0))
+
+hub_mat <- hub_matrix %>%
+  unite("Study_Method_Group", Study, Method,Group, sep = "_") %>%
+  column_to_rownames("Study_Method_Group") %>%
+  as.matrix()
+
+melted_hub <- melt(hub_mat)
+colnames(melted_hub) <- c("Study_Method_Group", "Taxon", "Presence")
+
+melted_hub <- melted_hub %>%
+  separate(Study_Method_Group, into = c("Study", "Method","Group"), sep = "_")
+
+
+# 2. Plot heatmap
+ggplot(melted_hub%>%filter(Method=="gl"), aes(x = Taxon, y = Study, #interaction(Study, Group, sep = "-")
+                       fill = as.factor(Presence))) +
+  geom_tile(color = "grey90") + facet_wrap(~ Group, ncol = 1) +
+  scale_fill_manual(values = c("0" = "white", "1" = "steelblue")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text.y = element_text(size = 7)) +
+  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(title = "Heatmap Hubs gl Method")
+
+ggplot(melted_hub%>%filter(Method=="mb"), aes(x = Taxon, y = Study, #interaction(Study, Group, sep = "-")
+                       fill = as.factor(Presence))) +
+  geom_tile(color = "grey90") + facet_wrap(~ Group, ncol = 1) +
+  scale_fill_manual(values = c("0" = "white", "1" = "steelblue")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text.y = element_text(size = 7)) +
+  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(title = "Heatmap Hubs mb Method")
+
+ggplot(melted_hub%>%filter(Method=="slr"), aes(x = Taxon, y = Study, #interaction(Study, Group, sep = "-")
+                       fill = as.factor(Presence))) +
+  geom_tile(color = "grey90") + facet_wrap(~ Group, ncol = 1) +
+  scale_fill_manual(values = c("0" = "white", "1" = "steelblue")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text.y = element_text(size = 7)) +
+  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(title = "Heatmap Hubs slr Method")
+
+
+ggplot(melted_hub, aes(x = Taxon, y = Study, #interaction(Study, Group, sep = "-")
+                       fill = as.factor(Presence))) +
+  geom_tile(color = "grey90") + facet_wrap(~ interaction(Method, Group, sep = "-")) +
+  scale_fill_manual(values = c("0" = "white", "1" = "steelblue")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1,size = 7),
+          axis.text.y = element_text(size = 7)) +
+  labs(x = "Taxon", y = "Study", fill = "Hub")+
+  labs(title = "Heatmap Hubs")
+```
+
+
