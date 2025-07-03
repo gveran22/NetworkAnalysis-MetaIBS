@@ -86,8 +86,12 @@ plot_network <- function(meta, layout = NULL, title = "Meta-Analysis", dataType 
        rmSingles = TRUE,
        nodeSize = "eigenvector",
        cexNodes = 0.58,
-       cexLabels = 0.7,
-       cexHubLabels = 1,
+       cexLabels = 0.8,
+       cexHubLabels = 0.9,
+       nodeTransp = 65,
+       hubTransp = 50,
+       edgeTranspLow = 70,
+       edgeTranspHigh = 20,
        title1 = title,
        showTitle = TRUE,
        cexTitle = 2,
@@ -122,8 +126,12 @@ plot_individual_network <- function(matrix, meta, layout,  datasets_names, metho
        rmSingles = "none",#TRUE,
        nodeSize = "eigenvector",
        cexNodes = 0.58,
-       cexLabels = 0.7,
-       cexHubLabels = 1,
+       cexLabels = 0.8,
+       cexHubLabels = 0.9,
+       nodeTransp = 65,
+       hubTransp = 50,
+       edgeTranspLow = 70,
+     edgeTranspHigh = 20,
        title1 = paste0("Network Analysis ",  str_to_title(datasets_names)," ",method),
        showTitle = TRUE,
        cexTitle = 1.5,
@@ -150,6 +158,7 @@ clean_matrix <- function(meta){
   mat_clean <- meta[connected, connected]
   return(mat_clean)
 }
+
 ```
 
 ******************
@@ -158,7 +167,7 @@ clean_matrix <- function(meta){
 
 ## 3.1. Summary Plots
 
-```{r meta-analysis, out.width="33%", fig.show="hold", fig.align="default", echo=FALSE}
+```{r meta-analysis, fig.width=13, fig.height=13, fig.show="hold", fig.align="default", echo=FALSE}
 
 matrices.gl <- load_matrices(datasets_names, path.assoc_mat, agg_level, 1)
 matrices.mb <- load_matrices(datasets_names, path.assoc_mat, agg_level, 2)
@@ -194,13 +203,13 @@ asso_g <- ifelse(asso_g!=0,1,0)
 asso_mb <- ifelse(asso_mb!=0,1,0)
 asso_slr <- ifelse(asso_slr!=0,1,0)
 common_mat <- asso_g*asso_mb*asso_slr
-common_net <- plot_network(common_mat, title = paste0("Common associations - ", agg_level), dataType ="proportionality", thresh = 0)
+common_net <- plot_network(common_mat, meta_layout,title = paste0("Common associations - ", agg_level), dataType ="proportionality", thresh = 0)
 
 ```
 
 ## 3.2. Individual Plots
 
-```{r single-network, out.width="33%", fig.show="hold", fig.align="default", echo=FALSE}
+```{r single-network, fig.width=13, fig.height=13, fig.show="hold", fig.align="default", echo=FALSE}
 
 for (i in seq(matrices.gl)){
   mat.gl <- matrices.gl[[i]]
@@ -211,6 +220,7 @@ for (i in seq(matrices.gl)){
   plot_individual_network(mat.mb, meta.mb, meta_layout, datasets_names[[i]], "MB")
   plot_individual_network(mat.slr, meta.slr, meta_layout, datasets_names[[i]], "SLR")
 }
+
 ```
 
 
