@@ -19,13 +19,11 @@ library(microViz)
 library(NetCoMi)
 
 # ROOT DIRECTORY (to modify on your computer)
-path.root <- "~/MetaIBS"
+path.root <- "C:/Users/Gilar/OneDrive/Escritorio/Master/9_Semester/Tesis/NetworkAnalysis-MetaIBS"
 path.datasets    <- file.path(path.root, "data")
 path.outputs <- file.path(path.root, "outputs/single-network-analysis/Individual")
 path.assoc_mat <- file.path(path.outputs , "association_matrices")
 path.venn_diag <- file.path(path.outputs , "venn-diagramm")
-
-source("tools/functions.R")
 
 datasets        <- list.files(path.datasets, pattern=".rds")
 datasets_names  <- sub(".*_(.*)\\..*", "\\1", datasets)

@@ -4,8 +4,6 @@
 # Author: Gilary Evans, Vera Nunez
 # *************************************
 
-source("tools/functions.R")
-
 get_assoc_matrix <- function(physeq_name, agg_level){
   
   load(file.path(path.spiec_easi, agg_level, 
@@ -19,7 +17,11 @@ get_assoc_matrix <- function(physeq_name, agg_level){
   assoMat.mb <- as.matrix(SpiecEasi::symBeta(SpiecEasi::getOptBeta(se.mb)))
   
   # Association matrix slr
-  opt <- getOptSLR(se.slr) # getting optimal se.slr
+  opt_slr <- getOptSLR(se.slr) # getting optimal se.slr
+  opt <- opt_slr$fit
+  opt_index <- opt_slr$opt_index
+  opt_ebic <- opt_slr$opt_ebic
+  opt_rank <- ranks[opt_index]
   icov <- Matrix::drop0(opt$est$icov[[getOptInd(opt)]])
   secor <- cov2cor(prec2cov(icov))
   assoMat.slr <- as.matrix(secor*getRefit(opt))
@@ -35,6 +37,7 @@ get_assoc_matrix <- function(physeq_name, agg_level){
   if (!dir.exists(file.path(path.assoc_mat, agg_level))) {
     dir.create(file.path(path.assoc_mat, agg_level), recursive = TRUE)
   }
-  save(assoMat.gl, assoMat.mb, assoMat.slr, file=file.path(path.assoc_mat, agg_level, 
-                                            paste0("AssocMat_",physeq_name,".RData")))
+  save(assoMat.gl, assoMat.mb, assoMat.slr, opt_index, opt_ebic, opt_rank, 
+       file=file.path(path.assoc_mat, agg_level,
+                      paste0("AssocMat_",physeq_name,".RData")))
 }

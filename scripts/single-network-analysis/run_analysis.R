@@ -23,9 +23,10 @@ library(igraph)
 library(microViz)
 library(NetCoMi)
 
+#setwd("C:/Users/Gilar/OneDrive/Escritorio/Master/9_Semester/Tesis/NetworkAnalysis-MetaIBS")
 
 # ROOT DIRECTORY (to modify on your computer)
-path.root <- "~/MetaIBS"
+path.root <- "C:/Users/Gilar/OneDrive/Escritorio/Master/9_Semester/Tesis/NetworkAnalysis-MetaIBS"
 path.datasets    <- file.path(path.root, "data/phyloseq_without_tree")
 path.phylobj    <- file.path(path.root, "build/Agglomeration/Individual")
 path.outputs <- file.path(path.root, "outputs/single-network-analysis")

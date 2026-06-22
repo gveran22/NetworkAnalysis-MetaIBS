@@ -11,13 +11,31 @@ filtering <- function(physeq_name, agg_level,
   # Read the phyloseq object
   physeq <- readRDS(file.path(path.phylobj, agg_level, paste0("agglo_",physeq_name,".rds")))
   
+  resolved <- resolve_filter_params(
+    physeq_obj = physeq,
+    filtTax = filtTax,
+    filtTaxPar = filtTaxPar,
+    filtSamp = filtSamp,
+    filtSampPar = filtSampPar
+  )
+  if (identical(filtTax, "none")) {
+    filtTaxPar_use <- NULL
+  }else{
+    filtTaxPar_use <- resolved$filtTaxPar_resolved
+  }
+  
+  if (identical(filtSamp, "none")) {
+    filtSampPar_use <- NULL
+  }else{
+    filtSampPar_use <- resolved$filtSampPar_resolved
+  }
   # Filtering
   net_asso <- netConstruct(physeq,
                            taxRank = agg_level,
-                           filtTax =  filtTax,
-                           filtTaxPar = filtTaxPar,
-                           filtSamp =   filtSamp,
-                           filtSampPar =  filtSampPar,
+                           filtTax = filtTax,
+                           filtTaxPar = filtTaxPar_use,
+                           filtSamp = filtSamp,
+                           filtSampPar = filtSampPar_use,
                            measure = NULL,
                            normMethod = "none", 
                            zeroMethod = "none",
