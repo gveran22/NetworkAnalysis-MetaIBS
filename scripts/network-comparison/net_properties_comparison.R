@@ -11,9 +11,9 @@ get_network_properties <- function(physeq_name, agg_level){
   load(file.path(path.assoc_mat, agg_level, 
                  paste0("AssocMat_",physeq_name,".RData")))
   
-  props_asso.gl <- summary(network_construct_comparison(assoMat_H.gl, assoMat_IBS.gl))
-  props_asso.mb <- summary(network_construct_comparison(assoMat_H.mb, assoMat_IBS.mb))
-  props_asso.slr <- summary(network_construct_comparison(assoMat_H.slr, assoMat_IBS.slr))
+  props_asso.gl <- summary(network_construct(assoMat_H.gl, assoMat_IBS.gl))
+  props_asso.mb <- summary(network_construct(assoMat_H.mb, assoMat_IBS.mb))
+  props_asso.slr <- summary(network_construct(assoMat_H.slr, assoMat_IBS.slr))
   
   props_asso.gl$group1 <- "Healthy"
   props_asso.gl$group2 <- "IBS"

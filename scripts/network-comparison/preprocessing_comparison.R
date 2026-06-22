@@ -7,29 +7,21 @@
 preprocessing_comparison <- function(physeq_name, agg_level){
   
   # Read the phyloseq object
-  phyloseq <- readRDS(file.path(path.phylobj, agg_level, paste0("agglo_",physeq_name,".rds")))
+  physeq <- readRDS(file.path(path.phylobj, agg_level, paste0("agglo_",physeq_name,".rds")))
   
-  # Renaming ASVs for agg_level name taxonomy
-  otutab <- as.data.frame(otu_table(phyloseq))
+  # Rename taxa using taxonomy name at agg_level
+  tax_names <- as.character(
+    as.data.frame(phyloseq::tax_table(physeq))[[agg_level]]
+  )
   
-  if(identical(colnames(otutab), taxa_names(phyloseq))){
-    colnames(otutab) <- as.data.frame(tax_table(phyloseq))[[agg_level]]
-  }else{
-    print("ASVs in OTU Table does not match the ASVs in the Taxonomy Table")
-  }
+  phyloseq::taxa_names(physeq) <- tax_names
   
-  otutab <- otu_table(as.matrix(otutab), taxa_are_rows=FALSE)
-  phyloseq@otu_table <- otutab
-  taxa <- as.data.frame(phyloseq@tax_table)
+  # Split groups
+  physeq_IBS <- phyloseq::subset_samples(physeq, host_disease == "IBS")
+  physeq_H <- phyloseq::subset_samples(physeq, host_disease == "Healthy")
   
-  rownames(phyloseq@tax_table) <- taxa[,agg_level]
-  
-  variable_names <- c("IBS", "Healthy")
-  
-  physeq_IBS <- phyloseq::subset_samples(phyloseq, host_disease == "IBS")
+  # Remove taxa absent within each group
   physeq_IBS <- prune_taxa(taxa_sums(physeq_IBS)>0, physeq_IBS)
-  
-  physeq_H <- phyloseq::subset_samples(phyloseq, host_disease == "Healthy")
   physeq_H <- prune_taxa(taxa_sums(physeq_H)>0, physeq_H)
   
   if (!dir.exists(file.path(path.phylobj_sep, agg_level))) {

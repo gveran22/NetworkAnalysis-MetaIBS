@@ -23,16 +23,16 @@ library(igraph)
 library(microViz)
 library(NetCoMi)
 
-
+setwd("C:/Users/Gilar/OneDrive/Escritorio/Master/9_Semester/Tesis/NetworkAnalysis-MetaIBS")
 # ROOT DIRECTORY (to modify on your computer)
-path.root <- "~/MetaIBS"
+path.root <- "C:/Users/Gilar/OneDrive/Escritorio/Master/9_Semester/Tesis/NetworkAnalysis-MetaIBS"
 source("scripts/network-comparison/preprocessing_comparison.R")
 source("scripts/network-comparison/filtering_comparison.R")
 source("scripts/network-comparison/fit_network_comparison.R")
 source("scripts/network-comparison/assoc_mat_comparison.R")
 source("scripts/network-comparison/net_properties_comparison.R")
 source("tools/functions.R")
-source("tools/analysis_configs.R")
+source("tools/analysis_configs_comparison.R")
 source("tools/analysis_variables.R")
 
 run_analysis <- function(agg_level, filtTax, filtTaxPar, filtSamp, filtSampPar, datasets_names) {
